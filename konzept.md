@@ -109,17 +109,6 @@ daraus sollte diese XML-Ausgabe (Auszug) generiert werden können:
             <message>DR-Antrag</message>
             <toState>Antwort von Vorgesetzter empfangen</toState>
         </sendState>
-        <receiveState>
-            <name>Antwort von Vorgesetzter empfangen</name>
-            <message>
-                <object>Genehmigung</object>
-                <toState>DR antreten</toState>
-            </message>
-            <message>
-                <object>Ablehnung</object>
-                <toState>Abgelehnt</toState>
-            </message>
-        </receiveState>
         <functionState>
             <name>DR antreten</name>
             <toState>DR beendet</toState>
@@ -167,69 +156,12 @@ daraus sollte diese XML-Ausgabe (Auszug) generiert werden können:
             <toState>Genehmigen</toState>
             <toState>Ablehnen</toState>
         </functionState>
-        <sendState async="true">
-            <name>Genehmigen</name>
-            <receiver>Mitarbeiter</receiver>
-            <message>Genehmigung</message>
-            <toState>Buchung veranlassen</toState>
-        </sendState>
-        <sendState async="true">
-            <name>Buchung veranlassen</name>
-            <receiver>Reisestelle</receiver>
-            <message>genehmigter DR-Antrag</message>
-            <toState>Ende</toState>
-        </sendState>
-        <sendState>
-            <name>Ablehnen</name>
-            <receiver>Mitarbeiter</receiver>
-            <message>Ablehnung</message>
-            <toState>Ende</toState>
-        </sendState>
-        <functionState eventType="END">
-            <name>Ende</name>
-        </functionState>
-    </userSubject>
-    <userSubject>
-        <name>Reisestelle</name>
-        <roles>Reisestelle</roles>
-        <receiveState eventType="START">
-            <name>DR-Antrag empfangen</name>
-            <message>
-                <object>genehmigter DR-Antrag</object>
-                <toState>Buchen</toState>
-            </message>
-        </receiveState>
-        <functionState>
-            <name>Buchen</name>
-            <toState>Reise gebucht</toState>
-        </functionState>
-        <functionState eventType="END">
-            <name>Reise gebucht</name>
-        </functionState>
-    </userSubject>
-    <object>
-        <name>DR-Antrag</name>
-        <field type="STRING">Name</field>
-        <field type="DATE">Reisebeginn</field>
-        <field type="DATE">Reiseende</field>
-        <field type="STRING">Reiseziel</field>
-    </object>
-    <object>
-        <name>Genehmigung</name>
-    </object>
-    <object>
-        <name>Ablehnung</name>
-    </object>
-    <object>
-        <name>Buchung</name>
-    </object>
-    <object>
-        <name>genehmigter DR-Antrag</name>
-    </object>
+  ...
 </pm:process>
 ```
 
-(Beispiele nicht vollständig)
+Vollständiges XML auf [GitHub](https://github.com/opensbpm/engine/blob/main/examples/src/main/resources/org/opensbpm/engine/examples/Dienstreiseantrag.xml )
+einsehbar.
 
 
 ## Elemente der DSL
