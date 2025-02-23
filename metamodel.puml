@@ -1,0 +1,78 @@
+@startuml
+
+  class Process {
+    name: String
+    subjects: List<Subject>
+  }
+
+  class Subject {
+    name: String
+    role: Role
+    tasks: List<Task>
+  }
+
+  class Role {
+    name: String
+  }
+
+  interface Task {
+    name: String
+  }
+
+  class ShowTask {
+    businessObjects: List<BusinessObject>
+  }
+
+  class SendTask {
+    businessObject: BusinessObject
+    receiver: Subject
+  }
+
+  class ReceiveTask {
+    messages: List<Message>
+  }
+
+  class Message {
+    businessObject: BusinessObject
+    transitionTo: Task
+  }
+
+
+  class Attribute {
+    name: String
+    readonly: boolean
+    required: boolean
+    type: FieldType
+  }
+
+  class BusinessObject {
+    attributes: List<Attribute>
+    name: String
+  }
+  enum FieldType {
+    + BOOLEAN {static}
+    + DATETIME {static}
+    + NUMBER {static}
+    + TEXT {static}
+  }
+
+Process "1" *-- "*" Subject : subjects
+Subject "1" o-r-- "1" Role : role
+Subject "1" *-- "*" Task : tasks
+
+ShowTask -u-|> Task
+ShowTask "1" *-- "*" BusinessObject : businessObjects
+
+SendTask -u-|> Task
+SendTask "1" o-d- "1" BusinessObject : businessObject
+SendTask "1" o-u- "1" Subject: receiver
+
+ReceiveTask -u-|> Task
+ReceiveTask "1" *-- "*" Message : messages
+Message "1" o-- "1" BusinessObject : message
+Message "1" o-- "1" Task : "transitionTo"
+
+BusinessObject "1" *-- "*" Attribute : attributes
+Attribute "1" o-r-> "1" FieldType : fieldType
+
+@enduml
