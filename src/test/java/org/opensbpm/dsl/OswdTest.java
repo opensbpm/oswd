@@ -23,11 +23,17 @@ public class OswdTest {
 //        OswdLexer oswdLexer = new OswdLexer(CharStreams.fromStream(resource));
 
         String content = "" +
-                "process Xyz\n" +
+                "process AProcess\n" +
                 " version 11\n" +
-                " description Bla\n" +
-                " Someone with role ARole\n" +
-                " Task show Object\n" +
+                " description ADescription\n" +
+                " Subject with role Role\n" +
+                "  Task show Object\n" +
+                "   with Field as required readonly\n" +
+                "   proceed to Task\n" +
+                "  Task send Object to Subject\n" +
+                "   proceed to Task\n" +
+                "  Task receive Object1 proceed to Task\n" +
+                "   Object2 proceed to Task\n" +
                 "";
         OswdLexer oswdLexer = new OswdLexer(CharStreams.fromString(content));
 
@@ -50,7 +56,7 @@ public class OswdTest {
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(listener, process);
 
-        assertThat(results, hasEntry("process", "Xyz"));
+        assertThat(results, hasEntry("process", "AProcess"));
         assertThat(results, hasEntry("version", "11"));
     }
 }
