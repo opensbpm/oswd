@@ -1,13 +1,14 @@
-package org.opensbpm.dsl;
+package org.opensbpm.oswd;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.jupiter.api.Test;
-import org.opensbpm.dsl.OswdParser.DefinitionContext;
-import org.opensbpm.dsl.OswdParser.ProcessContext;
-import org.opensbpm.dsl.OswdParser.VersionContext;
-import java.io.InputStream;
+import org.opensbpm.oswd.OswdParser.DefinitionContext;
+import org.opensbpm.oswd.OswdParser.ProcessContext;
+import org.opensbpm.oswd.OswdParser.VersionContext;
+import org.opensbpm.oswd.OswdParser.ProceedContext;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +52,11 @@ public class OswdTest {
             @Override
             public void enterVersion(VersionContext ctx) {
                 results.put("version", ctx.INT().getText());
+            }
+
+            @Override
+            public void exitProceed(ProceedContext ctx) {
+                ctx.IDENTIFIER().getText();
             }
         };
         ParseTreeWalker walker = new ParseTreeWalker();
