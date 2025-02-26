@@ -1,6 +1,7 @@
-# DSL for OpenSBPM
+# OpenSBPM Workflow Definition
 
 ## Overview
+OpenSBPM Workflow Definition (OSWD) is a humanreadable and intuitiv doman-specific language to build workflow Definition for OpenSBPM. OSWD Trier to follow native Sporen languages.
 This repository contains the implementation of a **domain-specific language (DSL)** for defining **subject-oriented business processes** in **OpenSBPM**. The DSL is written in **Groovy** and allows intuitive process modeling using a subject-verb structure.
 
 ## Features
