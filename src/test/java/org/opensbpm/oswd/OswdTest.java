@@ -1,25 +1,15 @@
 package org.opensbpm.oswd;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
-import org.opensbpm.oswd.OswdParser.DefinitionContext;
-import org.opensbpm.oswd.OswdParser.ProcessContext;
-import org.opensbpm.oswd.OswdParser.VersionContext;
-import org.opensbpm.oswd.OswdParser.ProceedContext;
-import org.opensbpm.oswd.ModelBuilderFactory.ProcessBuilder;
 
-import java.sql.Array;
 import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.opensbpm.oswd.ContextStackFactory.processItem;
 
 
 public class OswdTest {
