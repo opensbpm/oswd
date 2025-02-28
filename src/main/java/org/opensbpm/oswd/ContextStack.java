@@ -31,7 +31,9 @@ public class ContextStack {
         return getStack(stackItem).pop();
     }
 
+    @SuppressWarnings("unchecked")
     private <B extends ModelBuilder> Stack<B> getStack(StackItem<B, ? extends ParserRuleContext> stackItem) {
+        //cast is safe, cause its only possible to add checked Stack
         return (Stack<B>) classStackMap.get(stackItem.getContext());
     }
 

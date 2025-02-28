@@ -13,10 +13,10 @@ import org.opensbpm.oswd.OswdParser.VersionContext;
 import org.opensbpm.oswd.OswdParser.ProceedContext;
 import org.opensbpm.oswd.ModelBuilderFactory.ProcessBuilder;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Array;
+import java.util.*;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.opensbpm.oswd.ContextStackFactory.processItem;
@@ -35,7 +35,7 @@ public class OswdTest {
                 "process AProcess\n" +
                 " version 11\n" +
                 " description ADescription\n" +
-                " ASubject with role Role\n" +
+                " ASubject with role ARole\n" +
                 "  Task show Object\n" +
                 "   with Field as required readonly\n" +
                 "   proceed to Task\n" +
@@ -54,13 +54,17 @@ public class OswdTest {
         assertThat(process.getVersion(), is(11));
         assertThat(process.getSubjects(), contains(
                 isSubject(
-                        isName("ASubject")
+                        isName("ASubject"),
+                        isRoleName("ARole")
                 )
         ));
     }
 
 
-    private static CustomTypeSafeMatcher<Subject> isSubject(Matcher<Subject> matchers) {
+    private static CustomTypeSafeMatcher<Subject> isSubject(Matcher<? super Subject> matcher, Matcher<? super Subject>... additionals) {
+        ArrayList<Matcher<? super Subject>> matchers = new ArrayList<>(List.of(matcher));
+        matchers.addAll(asList(additionals));
+
         StringDescription description = new StringDescription();
         allOf(matchers).describeTo(description);
         return new CustomTypeSafeMatcher<>("subjects " + description.toString()) {
@@ -76,6 +80,15 @@ public class OswdTest {
             @Override
             protected boolean matchesSafely(Subject subject) {
                 return is(name).matches(subject.getName());
+            }
+        };
+    }
+
+    private static CustomTypeSafeMatcher<Subject> isRoleName(String name) {
+        return new CustomTypeSafeMatcher<>("subject with role name " + name) {
+            @Override
+            protected boolean matchesSafely(Subject subject) {
+                return is(name).matches(subject.getRole().getName());
             }
         };
     }

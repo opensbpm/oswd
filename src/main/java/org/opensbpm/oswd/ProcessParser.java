@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opensbpm.oswd.OswdParser.ProcessContext;
 import org.opensbpm.oswd.OswdParser.SubjectContext;
 import org.opensbpm.oswd.OswdParser.SubjectNameContext;
+import org.opensbpm.oswd.OswdParser.RoleNameContext;
 import org.opensbpm.oswd.OswdParser.VersionContext;
 
 import static org.opensbpm.oswd.ContextStackFactory.processItem;
@@ -30,7 +31,7 @@ class ProcessParser {
     }
 
     private static class MyOswdBaseListener extends OswdBaseListener {
-        final ContextStack contextStack;
+        private final ContextStack contextStack;
         private Process process;
 
         public MyOswdBaseListener() {
@@ -64,6 +65,13 @@ class ProcessParser {
         public void enterSubjectName(SubjectNameContext ctx) {
             contextStack.peek(subjectItem((SubjectContext) ctx.parent))
                     .withName(ctx.IDENTIFIER().getText());
+
+        }
+
+        @Override
+        public void enterRoleName(RoleNameContext ctx) {
+            contextStack.peek(subjectItem((SubjectContext) ctx.parent))
+                    .withRoleName(ctx.IDENTIFIER().getText());
 
         }
 

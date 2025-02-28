@@ -14,12 +14,12 @@ public class ModelBuilderFactory {
         return new SubjectBuilder();
     }
 
-    public static interface ModelBuilder{
+    public static interface ModelBuilder {
 
     }
 
-    public static class ProcessBuilder implements ModelBuilder{
-        private  String name;
+    public static class ProcessBuilder implements ModelBuilder {
+        private String name;
         private int version;
         private Collection<Subject> subjects = new ArrayList<>();
 
@@ -58,11 +58,17 @@ public class ModelBuilderFactory {
         }
     }
 
-    public static class SubjectBuilder implements ModelBuilder{
+    public static class SubjectBuilder implements ModelBuilder {
         private String name;
+        private String roleName;
 
         public SubjectBuilder withName(String name) {
             this.name = Objects.requireNonNull(name, "Name must not be null");
+            return this;
+        }
+
+        public SubjectBuilder withRoleName(String name) {
+            this.roleName = Objects.requireNonNull(name, "Role name must not be null");
             return this;
         }
 
@@ -71,6 +77,16 @@ public class ModelBuilderFactory {
                 @Override
                 public String getName() {
                     return name;
+                }
+
+                @Override
+                public Role getRole() {
+                    return new Role() {
+                        @Override
+                        public String getName() {
+                            return roleName;
+                        }
+                    };
                 }
             };
         }
