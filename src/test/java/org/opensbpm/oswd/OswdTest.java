@@ -3,17 +3,24 @@ package org.opensbpm.oswd;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.hamcrest.CustomTypeSafeMatcher;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
 import org.opensbpm.oswd.OswdParser.DefinitionContext;
 import org.opensbpm.oswd.OswdParser.ProcessContext;
 import org.opensbpm.oswd.OswdParser.VersionContext;
 import org.opensbpm.oswd.OswdParser.ProceedContext;
+import org.opensbpm.oswd.ModelBuilderFactory.ProcessBuilder;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.*;
+import static org.opensbpm.oswd.ContextStackFactory.processItem;
+
 
 public class OswdTest {
 
@@ -23,11 +30,12 @@ public class OswdTest {
 //        InputStream resource = OswdTest.class.getResourceAsStream("/sample.oswd");
 //        OswdLexer oswdLexer = new OswdLexer(CharStreams.fromStream(resource));
 
+        //arrange
         String content = "" +
                 "process AProcess\n" +
                 " version 11\n" +
                 " description ADescription\n" +
-                " Subject with role Role\n" +
+                " ASubject with role Role\n" +
                 "  Task show Object\n" +
                 "   with Field as required readonly\n" +
                 "   proceed to Task\n" +
@@ -36,33 +44,40 @@ public class OswdTest {
                 "  Task receive Object1 proceed to Task\n" +
                 "   Object2 proceed to Task\n" +
                 "";
-        OswdLexer oswdLexer = new OswdLexer(CharStreams.fromString(content));
 
-        CommonTokenStream tokens = new CommonTokenStream(oswdLexer);
-        OswdParser parser = new OswdParser(tokens);
-        DefinitionContext process = parser.definition();
+        //act
+        Process process = ProcessParser.parseProcess(content);
 
-        Map<String,String> results = new HashMap<>();
-        OswdBaseListener listener= new OswdBaseListener(){
+        //assert
+
+        assertThat(process.getName(), is("AProcess"));
+        assertThat(process.getVersion(), is(11));
+        assertThat(process.getSubjects(), contains(
+                isSubject(
+                        isName("ASubject")
+                )
+        ));
+    }
+
+
+    private static CustomTypeSafeMatcher<Subject> isSubject(Matcher<Subject> matchers) {
+        StringDescription description = new StringDescription();
+        allOf(matchers).describeTo(description);
+        return new CustomTypeSafeMatcher<>("subjects " + description.toString()) {
             @Override
-            public void enterProcess(ProcessContext ctx) {
-                results.put("process", ctx.IDENTIFIER().getText());
-            }
-
-            @Override
-            public void enterVersion(VersionContext ctx) {
-                results.put("version", ctx.INT().getText());
-            }
-
-            @Override
-            public void exitProceed(ProceedContext ctx) {
-                ctx.IDENTIFIER().getText();
+            protected boolean matchesSafely(Subject subject) {
+                return allOf(matchers).matches(subject);
             }
         };
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(listener, process);
-
-        assertThat(results, hasEntry("process", "AProcess"));
-        assertThat(results, hasEntry("version", "11"));
     }
+
+    private static CustomTypeSafeMatcher<Subject> isName(String name) {
+        return new CustomTypeSafeMatcher<>("subject with name " + name) {
+            @Override
+            protected boolean matchesSafely(Subject subject) {
+                return is(name).matches(subject.getName());
+            }
+        };
+    }
+
 }

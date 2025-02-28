@@ -4,7 +4,10 @@ definition  : process EOF;
 process     : 'process' SPACE IDENTIFIER CRLF version description? subject+;
 version     : SPACE* 'version' SPACE INT CRLF;
 description : SPACE* 'description' SPACE IDENTIFIER CRLF;
-subject     : SPACE* IDENTIFIER SPACE 'with role' SPACE IDENTIFIER CRLF task+;
+subject     : subjectName 'with role' SPACE IDENTIFIER CRLF task+;
+
+subjectName : SPACE* IDENTIFIER SPACE;
+
 task        : SPACE* IDENTIFIER SPACE (show | send | receive);
 show        : 'show' SPACE object CRLF proceed;
 send        : 'send' SPACE IDENTIFIER SPACE 'to' SPACE IDENTIFIER CRLF proceed;
