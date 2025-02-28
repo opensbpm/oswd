@@ -1,11 +1,13 @@
 package org.opensbpm.oswd;
 
-public interface Subject {
-    String getName();
+import java.util.Collection;
+
+public interface Subject extends HasName {
 
     Role getRole();
 
-    public interface Role {
-        String getName();
+    Collection<Task> getTasks();
+
+    public interface Role extends HasName{
     }
 }

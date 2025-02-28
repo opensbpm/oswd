@@ -5,12 +5,13 @@ process     : 'process' processName version description? subject+;
 processName : SPACE IDENTIFIER CRLF;
 version     : SPACE* 'version' SPACE INT CRLF;
 description : SPACE* 'description' SPACE IDENTIFIER CRLF;
-subject     : subjectName 'with role' roleName task+;
 
+subject     : subjectName 'with role' roleName task+;
 subjectName : SPACE* IDENTIFIER SPACE;
 roleName    : SPACE IDENTIFIER CRLF;
 
-task        : SPACE* IDENTIFIER SPACE (show | send | receive);
+task        : taskName (show | send | receive);
+taskName    : SPACE* IDENTIFIER SPACE;
 show        : 'show' SPACE object CRLF proceed;
 send        : 'send' SPACE IDENTIFIER SPACE 'to' SPACE IDENTIFIER CRLF proceed;
 receive     : 'receive' SPACE message+;

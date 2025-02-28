@@ -9,9 +9,12 @@ import org.opensbpm.oswd.OswdParser.SubjectContext;
 import org.opensbpm.oswd.OswdParser.SubjectNameContext;
 import org.opensbpm.oswd.OswdParser.RoleNameContext;
 import org.opensbpm.oswd.OswdParser.VersionContext;
+import org.opensbpm.oswd.OswdParser.TaskContext;
+import org.opensbpm.oswd.OswdParser.TaskNameContext;
 
 import static org.opensbpm.oswd.ContextStackFactory.processItem;
 import static org.opensbpm.oswd.ContextStackFactory.subjectItem;
+import static org.opensbpm.oswd.ContextStackFactory.taskItem;
 
 class ProcessParser {
 
@@ -44,15 +47,15 @@ class ProcessParser {
             contextStack.register(processItem(ctx));
         }
 
-        public void enterProcessName(ProcessNameContext ctx) {
-            contextStack.peek(processItem((ProcessContext) ctx.parent))
-                    .withName(ctx.IDENTIFIER().getText());
-        }
-
         @Override
         public void exitProcess(ProcessContext ctx) {
             process = contextStack.pop(processItem(ctx))
                     .build();
+        }
+
+        public void enterProcessName(ProcessNameContext ctx) {
+            contextStack.peek(processItem((ProcessContext) ctx.parent))
+                    .withName(ctx.IDENTIFIER().getText());
         }
 
         @Override
@@ -67,25 +70,42 @@ class ProcessParser {
         }
 
         @Override
+        public void exitSubject(SubjectContext ctx) {
+            Subject subjet = contextStack.pop(subjectItem(ctx))
+                    .build();
+            contextStack.peek(processItem((ProcessContext) ctx.parent))
+                    .addSubject(subjet);
+        }
+
+        @Override
         public void enterSubjectName(SubjectNameContext ctx) {
             contextStack.peek(subjectItem((SubjectContext) ctx.parent))
                     .withName(ctx.IDENTIFIER().getText());
-
         }
 
         @Override
         public void enterRoleName(RoleNameContext ctx) {
             contextStack.peek(subjectItem((SubjectContext) ctx.parent))
                     .withRoleName(ctx.IDENTIFIER().getText());
-
         }
 
         @Override
-        public void exitSubject(SubjectContext ctx) {
-            Subject subjet = contextStack.pop(subjectItem(ctx))
+        public void enterTask(TaskContext ctx) {
+            contextStack.register(taskItem(ctx));
+        }
+
+        @Override
+        public void exitTask(TaskContext ctx) {
+            Task task = contextStack.peek(taskItem(ctx))
                     .build();
-            contextStack.peek(processItem ((ProcessContext) ctx.parent))
-                    .addSubject(subjet);
+            contextStack.peek(subjectItem((SubjectContext) ctx.parent))
+                    .addTask(task);
+        }
+
+        @Override
+        public void enterTaskName(TaskNameContext ctx) {
+            contextStack.peek(taskItem((TaskContext) ctx.parent))
+                    .withName(ctx.IDENTIFIER().getText());
         }
 
         @Override

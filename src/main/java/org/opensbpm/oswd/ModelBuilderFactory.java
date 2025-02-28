@@ -2,6 +2,7 @@ package org.opensbpm.oswd;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 public class ModelBuilderFactory {
@@ -12,6 +13,10 @@ public class ModelBuilderFactory {
 
     public static SubjectBuilder createSubjectBuilder() {
         return new SubjectBuilder();
+    }
+
+    public static TaskBuilder createTaskBuilder() {
+        return new TaskBuilder();
     }
 
     public static interface ModelBuilder {
@@ -61,6 +66,7 @@ public class ModelBuilderFactory {
     public static class SubjectBuilder implements ModelBuilder {
         private String name;
         private String roleName;
+        private List<Task> tasks = new ArrayList<>();
 
         public SubjectBuilder withName(String name) {
             this.name = Objects.requireNonNull(name, "Name must not be null");
@@ -72,6 +78,10 @@ public class ModelBuilderFactory {
             return this;
         }
 
+        public SubjectBuilder addTask(Task task) {
+            this.tasks.add(task);
+            return this;
+        }
         public Subject build() {
             return new Subject() {
                 @Override
@@ -88,8 +98,31 @@ public class ModelBuilderFactory {
                         }
                     };
                 }
+
+                public Collection<Task> getTasks() {
+                    return tasks;
+                }
             };
         }
 
+    }
+
+    public static class TaskBuilder implements ModelBuilder {
+        private String name;
+
+        public TaskBuilder withName(String name) {
+            this.name = Objects.requireNonNull(name, "Name must not be null");
+            return this;
+        }
+
+        public Task build() {
+            return new Task() {
+
+                @Override
+                public String getName() {
+                    return name;
+                }
+            };
+        }
     }
 }

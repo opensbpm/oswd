@@ -26,12 +26,12 @@ public class OswdTest {
                 " version 11\n" +
                 " description ADescription\n" +
                 " ASubject with role ARole\n" +
-                "  Task show Object\n" +
+                "  ATask show Object\n" +
                 "   with Field as required readonly\n" +
                 "   proceed to Task\n" +
-                "  Task send Object to Subject\n" +
+                "  BTask send Object to Subject\n" +
                 "   proceed to Task\n" +
-                "  Task receive Object1 proceed to Task\n" +
+                "  CTask receive Object1 proceed to Task\n" +
                 "   Object2 proceed to Task\n" +
                 "";
 
@@ -45,7 +45,18 @@ public class OswdTest {
         assertThat(process.getSubjects(), contains(
                 isSubject(
                         isName("ASubject"),
-                        isRoleName("ARole")
+                        isRoleName("ARole"),
+                        containsTasks(
+                                isTask(
+                                        isTaskName("ATask")
+                                ),
+                                isTask(
+                                        isTaskName("BTask")
+                                ),
+                                isTask(
+                                        isTaskName("CTask")
+                                )
+                        )
                 )
         ));
     }
@@ -82,5 +93,43 @@ public class OswdTest {
             }
         };
     }
+
+    private static CustomTypeSafeMatcher<Subject> containsTasks(Matcher<? super Task> matcher, Matcher<? super Task>... additionals) {
+        ArrayList<Matcher<? super Task>> matchers = new ArrayList<>(List.of(matcher));
+        matchers.addAll(asList(additionals));
+
+        StringDescription description = new StringDescription();
+        allOf(matchers).describeTo(description);
+        return new CustomTypeSafeMatcher<>("tasks " + description.toString()) {
+            @Override
+            protected boolean matchesSafely(Subject subject) {
+                return contains(matchers).matches(subject.getTasks());
+            }
+        };
+    }
+
+    private static CustomTypeSafeMatcher<Task> isTask(Matcher<? super Task> matcher, Matcher<? super Task>... additionals) {
+        ArrayList<Matcher<? super Task>> matchers = new ArrayList<>(List.of(matcher));
+        matchers.addAll(asList(additionals));
+
+        StringDescription description = new StringDescription();
+        allOf(matchers).describeTo(description);
+        return new CustomTypeSafeMatcher<>("tasks " + description.toString()) {
+            @Override
+            protected boolean matchesSafely(Task task) {
+                return allOf(matchers).matches(task);
+            }
+        };
+    }
+
+    private static CustomTypeSafeMatcher<Task> isTaskName(String name) {
+        return new CustomTypeSafeMatcher<>("task with name " + name) {
+            @Override
+            protected boolean matchesSafely(Task task) {
+                return is(name).matches(task.getName());
+            }
+        };
+    }
+
 
 }
