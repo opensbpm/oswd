@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opensbpm.oswd.OswdParser.ProcessContext;
+import org.opensbpm.oswd.OswdParser.ProcessNameContext;
 import org.opensbpm.oswd.OswdParser.SubjectContext;
 import org.opensbpm.oswd.OswdParser.SubjectNameContext;
 import org.opensbpm.oswd.OswdParser.RoleNameContext;
@@ -40,7 +41,11 @@ class ProcessParser {
 
         @Override
         public void enterProcess(ProcessContext ctx) {
-            contextStack.register(processItem(ctx))
+            contextStack.register(processItem(ctx));
+        }
+
+        public void enterProcessName(ProcessNameContext ctx) {
+            contextStack.peek(processItem((ProcessContext) ctx.parent))
                     .withName(ctx.IDENTIFIER().getText());
         }
 
