@@ -23,18 +23,30 @@ public class ModelBuilderFactory {
 
     }
 
-    public static class ProcessBuilder implements ModelBuilder {
-        private String name;
+    public static abstract class AbstractBuilder<B extends AbstractBuilder<B>> implements ModelBuilder {
+        protected String name;
+
+        protected abstract B self();
+
+        public final B withName(String name) {
+            this.name = Objects.requireNonNull(name, "Name must not be null");
+            return self();
+        }
+
+
+    }
+
+    public static class ProcessBuilder extends AbstractBuilder<ProcessBuilder> {
         private int version;
         private Collection<Subject> subjects = new ArrayList<>();
 
-        public ProcessBuilder withName(String name) {
-            this.name = Objects.requireNonNull(name, "Name must not be null");
+        public ProcessBuilder withVersion(int version) {
+            this.version = version;
             return this;
         }
 
-        public ProcessBuilder withVersion(int version) {
-            this.version = version;
+        @Override
+        protected ProcessBuilder self() {
             return this;
         }
 
@@ -63,13 +75,12 @@ public class ModelBuilderFactory {
         }
     }
 
-    public static class SubjectBuilder implements ModelBuilder {
-        private String name;
+    public static class SubjectBuilder extends AbstractBuilder<SubjectBuilder> {
         private String roleName;
         private List<Task> tasks = new ArrayList<>();
 
-        public SubjectBuilder withName(String name) {
-            this.name = Objects.requireNonNull(name, "Name must not be null");
+        @Override
+        protected SubjectBuilder self() {
             return this;
         }
 
@@ -82,6 +93,7 @@ public class ModelBuilderFactory {
             this.tasks.add(task);
             return this;
         }
+
         public Subject build() {
             return new Subject() {
                 @Override
@@ -107,11 +119,10 @@ public class ModelBuilderFactory {
 
     }
 
-    public static class TaskBuilder implements ModelBuilder {
-        private String name;
+    public static class TaskBuilder extends AbstractBuilder<TaskBuilder>{
 
-        public TaskBuilder withName(String name) {
-            this.name = Objects.requireNonNull(name, "Name must not be null");
+        @Override
+        protected TaskBuilder self() {
             return this;
         }
 
