@@ -147,8 +147,8 @@ public class ModelBuilderFactory {
             return this;
         }
 
-        public Task build() {
-            return new Task() {
+        public ShowTask build() {
+            return new ShowTask() {
 
                 @Override
                 public String getName() {
@@ -165,8 +165,8 @@ public class ModelBuilderFactory {
             return this;
         }
 
-        public Task build() {
-            return new Task() {
+        public SendTask build() {
+            return new SendTask() {
 
                 @Override
                 public String getName() {
@@ -183,8 +183,8 @@ public class ModelBuilderFactory {
             return this;
         }
 
-        public Task build() {
-            return new Task() {
+        public ReceiveTask build() {
+            return new ReceiveTask() {
 
                 @Override
                 public String getName() {

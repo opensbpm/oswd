@@ -48,12 +48,15 @@ public class OswdTest {
                         isRoleName("ARole"),
                         containsTasks(
                                 isTask(
+                                        isA(ShowTask.class),
                                         isTaskName("ATask")
                                 ),
                                 isTask(
+                                        isA(SendTask.class),
                                         isTaskName("BTask")
                                 ),
                                 isTask(
+                                        isA(ReceiveTask.class),
                                         isTaskName("CTask")
                                 )
                         )
