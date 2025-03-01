@@ -6,8 +6,8 @@ processName : SPACE IDENTIFIER CRLF;
 version     : SPACE* 'version' SPACE INT CRLF;
 description : SPACE* 'description' SPACE IDENTIFIER CRLF;
 
-subject     : subjectName 'with role' roleName task+;
-subjectName : SPACE* IDENTIFIER SPACE;
+subject     : SPACE* subjectName 'with role' roleName task+;
+subjectName : SPACE IDENTIFIER SPACE;
 roleName    : SPACE IDENTIFIER CRLF;
 
 task        : taskName (show | send | receive);
