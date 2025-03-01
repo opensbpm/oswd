@@ -7,7 +7,7 @@ process Dienstreiseantrag
             with Name as required text and default "${user.name}"
             with Reisebeginn as required date
             with Reiseende as required date
-            with Reisezeil as required text
+            with Reiseziel as required text
             proceed to DR-Antrag an Vorgesetzer senden
 
         DR-Antrag an Vorgesetzer senden send DR-Antrag to Vorgesetzter
