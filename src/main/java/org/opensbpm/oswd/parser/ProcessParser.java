@@ -3,16 +3,22 @@ package org.opensbpm.oswd.parser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.opensbpm.oswd.BusinessObject;
 import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.Subject;
 import org.opensbpm.oswd.Task;
+import org.opensbpm.oswd.parser.OswdParser.DefinitionContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessNameContext;
+import org.opensbpm.oswd.parser.OswdParser.ProceedContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectNameContext;
 import org.opensbpm.oswd.parser.OswdParser.RoleNameContext;
 import org.opensbpm.oswd.parser.OswdParser.VersionContext;
+import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
+import org.opensbpm.oswd.parser.OswdParser.ObjectNameContext;
 import org.opensbpm.oswd.parser.OswdParser.TaskContext;
+import org.opensbpm.oswd.parser.OswdParser.ShowContext;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -23,12 +29,13 @@ import static org.opensbpm.oswd.parser.ContextStackFactory.subjectItem;
 import static org.opensbpm.oswd.parser.ContextStackFactory.showItem;
 import static org.opensbpm.oswd.parser.ContextStackFactory.sendItem;
 import static org.opensbpm.oswd.parser.ContextStackFactory.receiveItem;
+import static org.opensbpm.oswd.parser.ContextStackFactory.objectItem;
 
 public class ProcessParser {
 
     public static org.opensbpm.oswd.Process parseProcess(String content) {
         OswdParser parser = createOswdParser(content);
-        OswdParser.DefinitionContext definitionContext = parser.definition();
+        DefinitionContext definitionContext = parser.definition();
         MyOswdBaseListener listener = new MyOswdBaseListener();
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(listener, definitionContext);
@@ -127,7 +134,33 @@ public class ProcessParser {
         }
 
         @Override
-        public void exitProceed(OswdParser.ProceedContext ctx) {
+        public void exitShow(ShowContext ctx) {
+            BusinessObject businessObject = contextStack.peek(objectItem(ctx.object()))
+                    .build();
+
+            contextStack.peek(showItem(ctx))
+                    .withBusinessObject(businessObject);
+        }
+
+        @Override
+        public void enterObject(ObjectContext ctx) {
+            contextStack.register(objectItem(ctx));
+        }
+
+        @Override
+        public void exitObject(ObjectContext ctx) {
+            //((TaskContext)ctx.parent);
+        }
+
+
+        @Override
+        public void enterObjectName(ObjectNameContext ctx) {
+            contextStack.peek(objectItem((ObjectContext)ctx.parent))
+                    .withName(ctx.IDENTIFIER().getText());
+        }
+
+        @Override
+        public void exitProceed(ProceedContext ctx) {
             ctx.IDENTIFIER().getText();
         }
 

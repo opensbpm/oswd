@@ -27,7 +27,7 @@ public class OswdTest {
                 " version 11\n" +
                 " description ADescription\n" +
                 " ASubject with role ARole\n" +
-                "  ATask show Object\n" +
+                "  ATask show AObject\n" +
                 "   with Field as required readonly\n" +
                 "   proceed to Task\n" +
                 "  BTask send Object to Subject\n" +
@@ -50,7 +50,8 @@ public class OswdTest {
                         containsTasks(
                                 isTask(
                                         isA(ShowTask.class),
-                                        isTaskName("ATask")
+                                        isTaskName("ATask"),
+                                        (Matcher<? super Task>) isObjectName("AObject")
                                 ),
                                 isTask(
                                         isA(SendTask.class),
@@ -64,7 +65,6 @@ public class OswdTest {
                 )
         ));
     }
-
 
     private static CustomTypeSafeMatcher<Subject> isSubject(Matcher<? super Subject> matcher, Matcher<? super Subject>... additionals) {
         ArrayList<Matcher<? super Subject>> matchers = new ArrayList<>(List.of(matcher));
@@ -131,6 +131,15 @@ public class OswdTest {
             @Override
             protected boolean matchesSafely(Task task) {
                 return is(name).matches(task.getName());
+            }
+        };
+    }
+
+    private static CustomTypeSafeMatcher<? super ShowTask> isObjectName(String name) {
+        return new CustomTypeSafeMatcher<>("task with name " + name) {
+            @Override
+            protected boolean matchesSafely(ShowTask task) {
+                return is(name).matches(task.getBusinessObject().getName());
             }
         };
     }

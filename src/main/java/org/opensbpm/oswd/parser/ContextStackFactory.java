@@ -7,11 +7,13 @@ import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
 import org.opensbpm.oswd.parser.OswdParser.ShowContext;
 import org.opensbpm.oswd.parser.OswdParser.SendContext;
 import org.opensbpm.oswd.parser.OswdParser.ReceiveContext;
+import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
 import org.opensbpm.oswd.ModelBuilderFactory.ProcessBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.SubjectBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.ShowTaskBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.SendTaskBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.ReceiveTaskBuilder;
+import org.opensbpm.oswd.ModelBuilderFactory.BusinessObjectBuilder;
 
 public class ContextStackFactory {
 
@@ -65,6 +67,17 @@ public class ContextStackFactory {
             @Override
             public ReceiveTaskBuilder createBuilder() {
                 return ModelBuilderFactory.createReceiveTaskBuilder();
+            }
+
+        };
+    }
+
+    public static StackItem<BusinessObjectBuilder, ObjectContext> objectItem(ObjectContext ctx) {
+        return new AbstractStackItem<>(ctx) {
+
+            @Override
+            public BusinessObjectBuilder createBuilder() {
+                return ModelBuilderFactory.createBusinessObjectBuilder();
             }
 
         };

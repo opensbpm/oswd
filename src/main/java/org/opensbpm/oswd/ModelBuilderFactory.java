@@ -27,6 +27,10 @@ public class ModelBuilderFactory {
         return new ReceiveTaskBuilder();
     }
 
+    public static BusinessObjectBuilder createBusinessObjectBuilder() {
+        return new BusinessObjectBuilder();
+    }
+
     public static interface ModelBuilder {
 
     }
@@ -127,7 +131,7 @@ public class ModelBuilderFactory {
 
     }
 
-    public static abstract class AbstractTaskBuilder<B extends AbstractTaskBuilder<B>> extends AbstractBuilder<B>{
+    public static abstract class AbstractTaskBuilder<B extends AbstractTaskBuilder<B>> extends AbstractBuilder<B> {
 
         public Task build() {
             return new Task() {
@@ -140,12 +144,20 @@ public class ModelBuilderFactory {
         }
     }
 
-    public static class ShowTaskBuilder extends AbstractTaskBuilder<ShowTaskBuilder>{
+    public static class ShowTaskBuilder extends AbstractTaskBuilder<ShowTaskBuilder> {
+
+        private BusinessObject businessObject;
 
         @Override
         protected ShowTaskBuilder self() {
             return this;
         }
+
+        public ShowTaskBuilder withBusinessObject(BusinessObject businessObject) {
+            this.businessObject = Objects.requireNonNull(businessObject, "BusinessObject name must not be null");
+            return this;
+        }
+
 
         public ShowTask build() {
             return new ShowTask() {
@@ -154,11 +166,16 @@ public class ModelBuilderFactory {
                 public String getName() {
                     return name;
                 }
+
+                @Override
+                public BusinessObject getBusinessObject() {
+                    return businessObject;
+                }
             };
         }
     }
 
-    public static class SendTaskBuilder extends AbstractTaskBuilder<SendTaskBuilder>{
+    public static class SendTaskBuilder extends AbstractTaskBuilder<SendTaskBuilder> {
 
         @Override
         protected SendTaskBuilder self() {
@@ -176,7 +193,7 @@ public class ModelBuilderFactory {
         }
     }
 
-    public static class ReceiveTaskBuilder extends AbstractTaskBuilder<ReceiveTaskBuilder>{
+    public static class ReceiveTaskBuilder extends AbstractTaskBuilder<ReceiveTaskBuilder> {
 
         @Override
         protected ReceiveTaskBuilder self() {
@@ -185,6 +202,24 @@ public class ModelBuilderFactory {
 
         public ReceiveTask build() {
             return new ReceiveTask() {
+
+                @Override
+                public String getName() {
+                    return name;
+                }
+            };
+        }
+    }
+
+    public static class BusinessObjectBuilder extends AbstractBuilder<BusinessObjectBuilder> {
+
+        @Override
+        protected BusinessObjectBuilder self() {
+            return this;
+        }
+
+        public BusinessObject build() {
+            return new BusinessObject() {
 
                 @Override
                 public String getName() {
