@@ -1,12 +1,10 @@
-package org.opensbpm.oswd;
+package org.opensbpm.oswd.parser;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
-import org.opensbpm.oswd.OswdParser.ProcessContext;
-import org.opensbpm.oswd.OswdParser.SubjectContext;
-import org.opensbpm.oswd.ModelBuilderFactory.ProcessBuilder;
-import org.opensbpm.oswd.ModelBuilderFactory.SubjectBuilder;
+
+import org.opensbpm.oswd.StackItem;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opensbpm.oswd.ModelBuilderFactory.ModelBuilder;
 

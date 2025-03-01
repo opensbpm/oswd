@@ -1,37 +1,32 @@
-package org.opensbpm.oswd;
+package org.opensbpm.oswd.parser;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.opensbpm.oswd.OswdParser.ProcessContext;
-import org.opensbpm.oswd.OswdParser.ProcessNameContext;
-import org.opensbpm.oswd.OswdParser.SubjectContext;
-import org.opensbpm.oswd.OswdParser.SubjectNameContext;
-import org.opensbpm.oswd.OswdParser.RoleNameContext;
-import org.opensbpm.oswd.OswdParser.VersionContext;
-import org.opensbpm.oswd.OswdParser.TaskContext;
-import org.opensbpm.oswd.OswdParser.TaskNameContext;
-import org.opensbpm.oswd.OswdParser.ShowContext;
-import org.opensbpm.oswd.ModelBuilderFactory.AbstractTaskBuilder;
+import org.opensbpm.oswd.Process;
+import org.opensbpm.oswd.Subject;
+import org.opensbpm.oswd.Task;
+import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
+import org.opensbpm.oswd.parser.OswdParser.ProcessNameContext;
+import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
+import org.opensbpm.oswd.parser.OswdParser.SubjectNameContext;
+import org.opensbpm.oswd.parser.OswdParser.RoleNameContext;
+import org.opensbpm.oswd.parser.OswdParser.VersionContext;
+import org.opensbpm.oswd.parser.OswdParser.TaskContext;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
-import static org.opensbpm.oswd.ContextStackFactory.processItem;
-import static org.opensbpm.oswd.ContextStackFactory.subjectItem;
-import static org.opensbpm.oswd.ContextStackFactory.showItem;
-import static org.opensbpm.oswd.ContextStackFactory.sendItem;
-import static org.opensbpm.oswd.ContextStackFactory.receiveItem;
+import static org.opensbpm.oswd.parser.ContextStackFactory.processItem;
+import static org.opensbpm.oswd.parser.ContextStackFactory.subjectItem;
+import static org.opensbpm.oswd.parser.ContextStackFactory.showItem;
+import static org.opensbpm.oswd.parser.ContextStackFactory.sendItem;
+import static org.opensbpm.oswd.parser.ContextStackFactory.receiveItem;
 
-class ProcessParser {
+public class ProcessParser {
 
-    public static Process parseProcess(String content) {
+    public static org.opensbpm.oswd.Process parseProcess(String content) {
         OswdParser parser = createOswdParser(content);
         OswdParser.DefinitionContext definitionContext = parser.definition();
         MyOswdBaseListener listener = new MyOswdBaseListener();
@@ -49,7 +44,7 @@ class ProcessParser {
 
     private static class MyOswdBaseListener extends OswdBaseListener {
         private final ContextStack contextStack;
-        private Process process;
+        private org.opensbpm.oswd.Process process;
 
         public MyOswdBaseListener() {
             contextStack = new ContextStack();

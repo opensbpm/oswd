@@ -1,10 +1,12 @@
-package org.opensbpm.oswd;
+package org.opensbpm.oswd.parser;
 
-import org.opensbpm.oswd.OswdParser.ProcessContext;
-import org.opensbpm.oswd.OswdParser.SubjectContext;
-import org.opensbpm.oswd.OswdParser.ShowContext;
-import org.opensbpm.oswd.OswdParser.SendContext;
-import org.opensbpm.oswd.OswdParser.ReceiveContext;
+import org.opensbpm.oswd.ModelBuilderFactory;
+import org.opensbpm.oswd.StackItem;
+import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
+import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
+import org.opensbpm.oswd.parser.OswdParser.ShowContext;
+import org.opensbpm.oswd.parser.OswdParser.SendContext;
+import org.opensbpm.oswd.parser.OswdParser.ReceiveContext;
 import org.opensbpm.oswd.ModelBuilderFactory.ProcessBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.SubjectBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.ShowTaskBuilder;

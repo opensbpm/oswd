@@ -1,6 +1,8 @@
-package org.opensbpm.oswd;
+package org.opensbpm.oswd.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.opensbpm.oswd.ModelBuilderFactory;
+import org.opensbpm.oswd.StackItem;
 
 import java.util.Objects;
 

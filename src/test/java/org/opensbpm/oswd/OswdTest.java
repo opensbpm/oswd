@@ -4,6 +4,7 @@ import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
+import org.opensbpm.oswd.parser.ProcessParser;
 
 import java.util.*;
 
