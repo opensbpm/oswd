@@ -15,8 +15,16 @@ public class ModelBuilderFactory {
         return new SubjectBuilder();
     }
 
-    public static TaskBuilder createTaskBuilder() {
-        return new TaskBuilder();
+    public static ShowTaskBuilder createShowTaskBuilder() {
+        return new ShowTaskBuilder();
+    }
+
+    public static SendTaskBuilder createSendTaskBuilder() {
+        return new SendTaskBuilder();
+    }
+
+    public static ReceiveTaskBuilder createReceiveTaskBuilder() {
+        return new ReceiveTaskBuilder();
     }
 
     public static interface ModelBuilder {
@@ -119,10 +127,59 @@ public class ModelBuilderFactory {
 
     }
 
-    public static class TaskBuilder extends AbstractBuilder<TaskBuilder>{
+    public static abstract class AbstractTaskBuilder<B extends AbstractTaskBuilder<B>> extends AbstractBuilder<B>{
+
+        public Task build() {
+            return new Task() {
+
+                @Override
+                public String getName() {
+                    return name;
+                }
+            };
+        }
+    }
+
+    public static class ShowTaskBuilder extends AbstractTaskBuilder<ShowTaskBuilder>{
 
         @Override
-        protected TaskBuilder self() {
+        protected ShowTaskBuilder self() {
+            return this;
+        }
+
+        public Task build() {
+            return new Task() {
+
+                @Override
+                public String getName() {
+                    return name;
+                }
+            };
+        }
+    }
+
+    public static class SendTaskBuilder extends AbstractTaskBuilder<SendTaskBuilder>{
+
+        @Override
+        protected SendTaskBuilder self() {
+            return this;
+        }
+
+        public Task build() {
+            return new Task() {
+
+                @Override
+                public String getName() {
+                    return name;
+                }
+            };
+        }
+    }
+
+    public static class ReceiveTaskBuilder extends AbstractTaskBuilder<ReceiveTaskBuilder>{
+
+        @Override
+        protected ReceiveTaskBuilder self() {
             return this;
         }
 

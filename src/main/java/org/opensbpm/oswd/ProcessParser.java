@@ -11,10 +11,21 @@ import org.opensbpm.oswd.OswdParser.RoleNameContext;
 import org.opensbpm.oswd.OswdParser.VersionContext;
 import org.opensbpm.oswd.OswdParser.TaskContext;
 import org.opensbpm.oswd.OswdParser.TaskNameContext;
+import org.opensbpm.oswd.OswdParser.ShowContext;
+import org.opensbpm.oswd.ModelBuilderFactory.AbstractTaskBuilder;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
+import static java.util.Optional.ofNullable;
 import static org.opensbpm.oswd.ContextStackFactory.processItem;
 import static org.opensbpm.oswd.ContextStackFactory.subjectItem;
-import static org.opensbpm.oswd.ContextStackFactory.taskItem;
+import static org.opensbpm.oswd.ContextStackFactory.showItem;
+import static org.opensbpm.oswd.ContextStackFactory.sendItem;
+import static org.opensbpm.oswd.ContextStackFactory.receiveItem;
 
 class ProcessParser {
 
@@ -91,21 +102,37 @@ class ProcessParser {
 
         @Override
         public void enterTask(TaskContext ctx) {
-            contextStack.register(taskItem(ctx));
+            ofNullable(ctx.show())
+                    .ifPresent(show -> contextStack.register(showItem(show)));
+
+            ofNullable(ctx.receive())
+                    .ifPresent(receive -> contextStack.register(receiveItem(receive)));
+
+            ofNullable(ctx.send())
+                            .ifPresent(send -> contextStack.register(sendItem(send)));
         }
 
         @Override
         public void exitTask(TaskContext ctx) {
-            Task task = contextStack.peek(taskItem(ctx))
+            Task task = Stream.of(
+                            ofNullable(ctx.show())
+                                    .map(show -> contextStack.pop(showItem(show))),
+                            ofNullable(ctx.receive())
+                                    .map(receive -> contextStack.pop(receiveItem(receive))),
+                            ofNullable(ctx.send())
+                                    .map(send -> contextStack.pop(sendItem(send)))
+                    )
+                    .filter(Optional::isPresent)
+                    .reduce((a, b) -> {
+                        throw new IllegalStateException("Multiple tasks " + a + ", " + b);
+                    })
+                    .flatMap(optional->optional)
+                    .orElseThrow(() -> new IllegalStateException("No task for " + ctx.taskName().IDENTIFIER().toString()))
+                    .withName(ctx.taskName().IDENTIFIER().getText())
                     .build();
+
             contextStack.peek(subjectItem((SubjectContext) ctx.parent))
                     .addTask(task);
-        }
-
-        @Override
-        public void enterTaskName(TaskNameContext ctx) {
-            contextStack.peek(taskItem((TaskContext) ctx.parent))
-                    .withName(ctx.IDENTIFIER().getText());
         }
 
         @Override
