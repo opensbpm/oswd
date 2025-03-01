@@ -15,9 +15,11 @@ import org.opensbpm.oswd.OswdParser.ShowContext;
 import org.opensbpm.oswd.ModelBuilderFactory.AbstractTaskBuilder;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
@@ -109,25 +111,19 @@ class ProcessParser {
                     .ifPresent(receive -> contextStack.register(receiveItem(receive)));
 
             ofNullable(ctx.send())
-                            .ifPresent(send -> contextStack.register(sendItem(send)));
+                    .ifPresent(send -> contextStack.register(sendItem(send)));
         }
 
         @Override
         public void exitTask(TaskContext ctx) {
-            Task task = Stream.of(
-                            ofNullable(ctx.show())
-                                    .map(show -> contextStack.pop(showItem(show))),
-                            ofNullable(ctx.receive())
-                                    .map(receive -> contextStack.pop(receiveItem(receive))),
-                            ofNullable(ctx.send())
-                                    .map(send -> contextStack.pop(sendItem(send)))
-                    )
-                    .filter(Optional::isPresent)
-                    .reduce((a, b) -> {
-                        throw new IllegalStateException("Multiple tasks " + a + ", " + b);
-                    })
-                    .flatMap(optional->optional)
-                    .orElseThrow(() -> new IllegalStateException("No task for " + ctx.taskName().IDENTIFIER().toString()))
+            Task task = toExactlyOne(
+                    ofNullable(ctx.show())
+                            .map(show -> contextStack.pop(showItem(show))),
+                    ofNullable(ctx.receive())
+                            .map(receive -> contextStack.pop(receiveItem(receive))),
+                    ofNullable(ctx.send())
+                            .map(send -> contextStack.pop(sendItem(send)))
+            )
                     .withName(ctx.taskName().IDENTIFIER().getText())
                     .build();
 
@@ -142,6 +138,17 @@ class ProcessParser {
 
         public Process getProcess() {
             return process;
+        }
+
+        @SafeVarargs
+        private static <T> T toExactlyOne(Optional<T>... optionals) {
+            return  Stream.of(optionals)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .reduce((a, b) -> {
+                        throw new IllegalStateException("Multiple items " + a + ", " + b);
+                    })
+                    .orElseThrow(() -> new IllegalStateException("No item"));
         }
     }
 }
