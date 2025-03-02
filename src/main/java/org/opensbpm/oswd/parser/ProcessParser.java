@@ -141,7 +141,8 @@ public class ProcessParser {
                     .build();
 
             contextStack.peek(showItem(ctx))
-                    .withBusinessObject(businessObject);
+                    .withBusinessObject(businessObject)
+                    .withProceedTo(ctx.proceed().taskNameReference().IDENTIFIER().getText());
         }
 
         @Override
@@ -181,11 +182,6 @@ public class ProcessParser {
             contextStack.peek(attributeItem((AttributeContext)ctx.parent))
                     .withType(AttributeType.tokenOf(ctx.getText().trim()));
 
-        }
-
-        @Override
-        public void exitProceed(ProceedContext ctx) {
-            ctx.IDENTIFIER().getText();
         }
 
         public Process getProcess() {

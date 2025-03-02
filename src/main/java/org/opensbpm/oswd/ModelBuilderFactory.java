@@ -35,11 +35,11 @@ public class ModelBuilderFactory {
         return new AttributeBuilder();
     }
 
-    public static interface ModelBuilder {
-
+    public static interface ModelBuilder<T> {
+        public T build();
     }
 
-    public static abstract class AbstractBuilder<B extends AbstractBuilder<B>> implements ModelBuilder {
+    public static abstract class AbstractBuilder<T, B extends AbstractBuilder<T,B>> implements ModelBuilder<T> {
         protected String name;
 
         protected abstract B self();
@@ -49,16 +49,15 @@ public class ModelBuilderFactory {
             return self();
         }
 
-
     }
 
-    public static class ProcessBuilder extends AbstractBuilder<ProcessBuilder> {
+    public static class ProcessBuilder extends AbstractBuilder<Process, ProcessBuilder> {
         private int version;
         private Collection<Subject> subjects = new ArrayList<>();
 
         public ProcessBuilder withVersion(int version) {
             this.version = version;
-            return this;
+            return self();
         }
 
         @Override
@@ -68,7 +67,7 @@ public class ModelBuilderFactory {
 
         public ProcessBuilder addSubject(Subject subject) {
             this.subjects.add(subject);
-            return this;
+            return self();
         }
 
         public Process build() {
@@ -91,7 +90,7 @@ public class ModelBuilderFactory {
         }
     }
 
-    public static class SubjectBuilder extends AbstractBuilder<SubjectBuilder> {
+    public static class SubjectBuilder extends AbstractBuilder<Subject, SubjectBuilder> {
         private String roleName;
         private List<Task> tasks = new ArrayList<>();
 
@@ -102,12 +101,12 @@ public class ModelBuilderFactory {
 
         public SubjectBuilder withRoleName(String name) {
             this.roleName = Objects.requireNonNull(name, "Role name must not be null");
-            return this;
+            return self();
         }
 
         public SubjectBuilder addTask(Task task) {
             this.tasks.add(task);
-            return this;
+            return self();
         }
 
         public Subject build() {
@@ -135,22 +134,13 @@ public class ModelBuilderFactory {
 
     }
 
-    public static abstract class AbstractTaskBuilder<B extends AbstractTaskBuilder<B>> extends AbstractBuilder<B> {
-
-        public Task build() {
-            return new Task() {
-
-                @Override
-                public String getName() {
-                    return name;
-                }
-            };
-        }
+    public static abstract class AbstractTaskBuilder<T extends Task, B extends AbstractTaskBuilder<T, B>> extends AbstractBuilder<T, B> {
     }
 
-    public static class ShowTaskBuilder extends AbstractTaskBuilder<ShowTaskBuilder> {
+    public static class ShowTaskBuilder extends AbstractTaskBuilder<ShowTask, ShowTaskBuilder> {
 
         private BusinessObject businessObject;
+        private String proceedTo;
 
         @Override
         protected ShowTaskBuilder self() {
@@ -159,9 +149,14 @@ public class ModelBuilderFactory {
 
         public ShowTaskBuilder withBusinessObject(BusinessObject businessObject) {
             this.businessObject = Objects.requireNonNull(businessObject, "BusinessObject name must not be null");
-            return this;
+            return self();
         }
 
+
+        public ShowTaskBuilder withProceedTo(String taskNameReference) {
+            this.proceedTo = Objects.requireNonNull(taskNameReference, "taskNameReference must not be null");
+            return self();
+        }
 
         public ShowTask build() {
             return new ShowTask() {
@@ -175,11 +170,16 @@ public class ModelBuilderFactory {
                 public BusinessObject getBusinessObject() {
                     return businessObject;
                 }
+
+                @Override
+                public String getProceedTo() {
+                    return proceedTo;
+                }
             };
         }
     }
 
-    public static class SendTaskBuilder extends AbstractTaskBuilder<SendTaskBuilder> {
+    public static class SendTaskBuilder extends AbstractTaskBuilder<SendTask, SendTaskBuilder> {
 
         @Override
         protected SendTaskBuilder self() {
@@ -197,7 +197,7 @@ public class ModelBuilderFactory {
         }
     }
 
-    public static class ReceiveTaskBuilder extends AbstractTaskBuilder<ReceiveTaskBuilder> {
+    public static class ReceiveTaskBuilder extends AbstractTaskBuilder<ReceiveTask, ReceiveTaskBuilder> {
 
         @Override
         protected ReceiveTaskBuilder self() {
@@ -215,7 +215,7 @@ public class ModelBuilderFactory {
         }
     }
 
-    public static class BusinessObjectBuilder extends AbstractBuilder<BusinessObjectBuilder> {
+    public static class BusinessObjectBuilder extends AbstractBuilder<BusinessObject, BusinessObjectBuilder> {
 
         private List<Attribute> attributes = new ArrayList<>();
 
@@ -227,7 +227,7 @@ public class ModelBuilderFactory {
 
         public BusinessObjectBuilder addAttribute(Attribute attribute) {
             this.attributes.add(attribute);
-            return this;
+            return self();
         }
 
 
@@ -247,7 +247,7 @@ public class ModelBuilderFactory {
         }
     }
 
-    public static class AttributeBuilder extends AbstractBuilder<AttributeBuilder> {
+    public static class AttributeBuilder extends AbstractBuilder<Attribute, AttributeBuilder> {
 
         private AttributeType attributeType;
         private boolean required;
@@ -260,17 +260,17 @@ public class ModelBuilderFactory {
 
         public AttributeBuilder withType(AttributeType attributeType) {
             this.attributeType = Objects.requireNonNull(attributeType, "attributeType must not be null");
-            return this;
+            return self();
         }
 
         public AttributeBuilder asRequired() {
             this.required = true;
-            return this;
+            return self();
         }
 
         public AttributeBuilder asReadonly() {
             this.readonly = true;
-            return this;
+            return self();
         }
 
         public Attribute build() {

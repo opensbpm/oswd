@@ -32,7 +32,7 @@ public class OswdTest {
                 "  ATask show AObject\n" +
                 "   with AField as text required readonly\n" +
                 "   with BField as number\n" +
-                "   proceed to Task\n" +
+                "   proceed to BTask\n" +
                 "  BTask send Object to Subject\n" +
                 "   proceed to Task\n" +
                 "  CTask receive Object1 proceed to Task\n" +
@@ -82,7 +82,8 @@ public class OswdTest {
                 .orElseThrow();
         assertThat(aTask, allOf(
                 isTaskName("ATask"),
-                isObjectName("AObject")
+                isObjectName("AObject"),
+                isProceedTo("BTask")
         ));
 
         assertThat(aTask.getBusinessObject().getAttributes(),

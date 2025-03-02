@@ -94,6 +94,16 @@ public class OswdMatchers {
         };
     }
 
+    public static CustomTypeSafeMatcher<ShowTask> isProceedTo(String name) {
+        return new CustomTypeSafeMatcher<>("task with name " + name) {
+            @Override
+            protected boolean matchesSafely(ShowTask task) {
+                return is(name).matches(task.getProceedTo());
+            }
+        };
+    }
+
+
     public OswdMatchers() {
         //avoid instantiation
     }
