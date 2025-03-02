@@ -20,7 +20,9 @@ message     : SPACE* IDENTIFIER SPACE proceed;
 object      : objectName attribute+;
 objectName  : SPACE IDENTIFIER CRLF;
 
-attribute   : SPACE* 'with' SPACE IDENTIFIER SPACE 'as' required? readonly?;
+attribute   : SPACE* 'with' attributeName 'as' required? readonly?;
+attributeName: SPACE IDENTIFIER SPACE;
+
 required    : SPACE 'required';
 readonly    : SPACE 'readonly';
 

@@ -1,4 +1,8 @@
 package org.opensbpm.oswd;
 
-public interface BusinessObject extends HasName{
+import java.util.Collection;
+
+public interface BusinessObject extends HasName {
+
+    Collection<Attribute> getAttributes();
 }

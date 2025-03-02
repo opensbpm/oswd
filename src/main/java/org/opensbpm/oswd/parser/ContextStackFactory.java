@@ -2,12 +2,14 @@ package org.opensbpm.oswd.parser;
 
 import org.opensbpm.oswd.ModelBuilderFactory;
 import org.opensbpm.oswd.StackItem;
+import org.opensbpm.oswd.parser.OswdParser.AttributeContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
 import org.opensbpm.oswd.parser.OswdParser.ShowContext;
 import org.opensbpm.oswd.parser.OswdParser.SendContext;
 import org.opensbpm.oswd.parser.OswdParser.ReceiveContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
+import org.opensbpm.oswd.ModelBuilderFactory.AttributeBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.ProcessBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.SubjectBuilder;
 import org.opensbpm.oswd.ModelBuilderFactory.ShowTaskBuilder;
@@ -78,6 +80,17 @@ public class ContextStackFactory {
             @Override
             public BusinessObjectBuilder createBuilder() {
                 return ModelBuilderFactory.createBusinessObjectBuilder();
+            }
+
+        };
+    }
+
+    public static StackItem<AttributeBuilder, AttributeContext> attributeItem(AttributeContext ctx) {
+        return new AbstractStackItem<>(ctx) {
+
+            @Override
+            public AttributeBuilder createBuilder() {
+                return ModelBuilderFactory.createAttributeBuilder();
             }
 
         };

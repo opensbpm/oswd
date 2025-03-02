@@ -3,10 +3,10 @@ package org.opensbpm.oswd.parser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.opensbpm.oswd.BusinessObject;
+import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
-import org.opensbpm.oswd.Subject;
-import org.opensbpm.oswd.Task;
+import org.opensbpm.oswd.parser.OswdParser.AttributeContext;
+import org.opensbpm.oswd.parser.OswdParser.AttributeNameContext;
 import org.opensbpm.oswd.parser.OswdParser.DefinitionContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessNameContext;
@@ -30,6 +30,7 @@ import static org.opensbpm.oswd.parser.ContextStackFactory.showItem;
 import static org.opensbpm.oswd.parser.ContextStackFactory.sendItem;
 import static org.opensbpm.oswd.parser.ContextStackFactory.receiveItem;
 import static org.opensbpm.oswd.parser.ContextStackFactory.objectItem;
+import static org.opensbpm.oswd.parser.ContextStackFactory.attributeItem;
 
 public class ProcessParser {
 
@@ -148,15 +149,29 @@ public class ProcessParser {
         }
 
         @Override
-        public void exitObject(ObjectContext ctx) {
-            //((TaskContext)ctx.parent);
-        }
-
-
-        @Override
         public void enterObjectName(ObjectNameContext ctx) {
             contextStack.peek(objectItem((ObjectContext)ctx.parent))
                     .withName(ctx.IDENTIFIER().getText());
+        }
+
+        @Override
+        public void enterAttribute(AttributeContext ctx) {
+            contextStack.register(attributeItem(ctx));
+        }
+
+        @Override
+        public void enterAttributeName(AttributeNameContext ctx) {
+            contextStack.peek(attributeItem((AttributeContext)ctx.parent))
+                    .withName(ctx.IDENTIFIER().getText());
+        }
+
+        @Override
+        public void exitAttribute(AttributeContext ctx) {
+            Attribute attribute = contextStack.pop(attributeItem(ctx))
+                    .build();
+
+            contextStack.peek(objectItem((ObjectContext) ctx.parent))
+                    .addAttribute(attribute);
         }
 
         @Override

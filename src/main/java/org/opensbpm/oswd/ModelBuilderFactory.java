@@ -31,6 +31,10 @@ public class ModelBuilderFactory {
         return new BusinessObjectBuilder();
     }
 
+    public static AttributeBuilder createAttributeBuilder() {
+        return new AttributeBuilder();
+    }
+
     public static interface ModelBuilder {
 
     }
@@ -213,13 +217,45 @@ public class ModelBuilderFactory {
 
     public static class BusinessObjectBuilder extends AbstractBuilder<BusinessObjectBuilder> {
 
+        private List<Attribute> attributes = new ArrayList<>();
+
         @Override
         protected BusinessObjectBuilder self() {
             return this;
         }
 
+
+        public BusinessObjectBuilder addAttribute(Attribute attribute) {
+            this.attributes.add(attribute);
+            return this;
+        }
+
+
         public BusinessObject build() {
             return new BusinessObject() {
+
+                @Override
+                public String getName() {
+                    return name;
+                }
+
+                @Override
+                public Collection<Attribute> getAttributes() {
+                    return attributes;
+                }
+            };
+        }
+    }
+
+    public static class AttributeBuilder extends AbstractBuilder<AttributeBuilder> {
+
+        @Override
+        protected AttributeBuilder self() {
+            return this;
+        }
+
+        public Attribute build() {
+            return new Attribute() {
 
                 @Override
                 public String getName() {

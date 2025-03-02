@@ -28,7 +28,7 @@ public class OswdTest {
                 " description ADescription\n" +
                 " ASubject with role ARole\n" +
                 "  ATask show AObject\n" +
-                "   with Field as required readonly\n" +
+                "   with AField as required readonly\n" +
                 "   proceed to Task\n" +
                 "  BTask send Object to Subject\n" +
                 "   proceed to Task\n" +
@@ -44,26 +44,49 @@ public class OswdTest {
         assertThat(process.getName(), is("AProcess"));
         assertThat(process.getVersion(), is(11));
         assertThat(process.getSubjects(), contains(
-                isSubject(
-                        isName("ASubject"),
-                        isRoleName("ARole"),
-                        containsTasks(
-                                isTask(
-                                        isA(ShowTask.class),
-                                        isTaskName("ATask"),
-                                        (Matcher<? super Task>) isObjectName("AObject")
-                                ),
-                                isTask(
-                                        isA(SendTask.class),
-                                        isTaskName("BTask")
-                                ),
-                                isTask(
-                                        isA(ReceiveTask.class),
-                                        isTaskName("CTask")
-                                )
+                        isSubjectName("ASubject")
+        ));
+
+        Subject aSubject = process.getSubjects().stream()
+                .filter(s -> "ASubject".equals(s.getName()))
+                .findFirst().orElseThrow();
+
+        assertThat(aSubject, allOf(
+                isSubjectName("ASubject"),
+                isRoleName("ARole"),
+                containsTasks(
+                        isTask(
+                                isA(ShowTask.class),
+                                isTaskName("ATask"),
+                                (Matcher<? super Task>) isObjectName("AObject")
+                        ),
+                        isTask(
+                                isA(SendTask.class),
+                                isTaskName("BTask")
+                        ),
+                        isTask(
+                                isA(ReceiveTask.class),
+                                isTaskName("CTask")
                         )
                 )
         ));
+
+        ShowTask aTask = aSubject.getTasks().stream()
+                .filter(task -> "ATask".equals(task.getName()))
+                .findFirst()
+                .map(ShowTask.class::cast)
+                .orElseThrow();
+        assertThat(aTask, allOf(
+                isTaskName("ATask"),
+                isObjectName("AObject")
+        ));
+
+        assertThat(aTask.getBusinessObject().getAttributes(),
+                contains(
+                        isAttribute("AField")
+                )
+        );
+
     }
 
     private static CustomTypeSafeMatcher<Subject> isSubject(Matcher<? super Subject> matcher, Matcher<? super Subject>... additionals) {
@@ -80,7 +103,7 @@ public class OswdTest {
         };
     }
 
-    private static CustomTypeSafeMatcher<Subject> isName(String name) {
+    private static CustomTypeSafeMatcher<Subject> isSubjectName(String name) {
         return new CustomTypeSafeMatcher<>("subject with name " + name) {
             @Override
             protected boolean matchesSafely(Subject subject) {
@@ -140,6 +163,15 @@ public class OswdTest {
             @Override
             protected boolean matchesSafely(ShowTask task) {
                 return is(name).matches(task.getBusinessObject().getName());
+            }
+        };
+    }
+
+    private static CustomTypeSafeMatcher<Attribute> isAttribute(String name) {
+        return new CustomTypeSafeMatcher<>("task with name " + name) {
+            @Override
+            protected boolean matchesSafely(Attribute attribute) {
+                return is(name).matches(attribute.getName());
             }
         };
     }
