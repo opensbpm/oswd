@@ -249,10 +249,18 @@ public class ModelBuilderFactory {
 
     public static class AttributeBuilder extends AbstractBuilder<AttributeBuilder> {
 
+        private AttributeType attributeType;
+
         @Override
         protected AttributeBuilder self() {
             return this;
         }
+
+        public AttributeBuilder withType(AttributeType attributeType) {
+            this.attributeType = Objects.requireNonNull(attributeType, "attributeType must not be null");
+            return this;
+        }
+
 
         public Attribute build() {
             return new Attribute() {
@@ -260,6 +268,11 @@ public class ModelBuilderFactory {
                 @Override
                 public String getName() {
                     return name;
+                }
+
+                @Override
+                public AttributeType getAttributeType() {
+                    return attributeType;
                 }
             };
         }

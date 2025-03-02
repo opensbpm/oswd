@@ -20,9 +20,10 @@ message     : SPACE* IDENTIFIER SPACE proceed;
 object      : objectName attribute+;
 objectName  : SPACE IDENTIFIER CRLF;
 
-attribute   : SPACE* 'with' attributeName 'as' required? readonly?;
+attribute   : SPACE* 'with' attributeName 'as' attributeType required? readonly?;
 attributeName: SPACE IDENTIFIER SPACE;
 
+attributeType : SPACE ('bool' | 'number' | 'date' | 'text');
 required    : SPACE 'required';
 readonly    : SPACE 'readonly';
 

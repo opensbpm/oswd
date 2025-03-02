@@ -28,7 +28,7 @@ public class OswdTest {
                 " description ADescription\n" +
                 " ASubject with role ARole\n" +
                 "  ATask show AObject\n" +
-                "   with AField as required readonly\n" +
+                "   with AField as text required readonly\n" +
                 "   proceed to Task\n" +
                 "  BTask send Object to Subject\n" +
                 "   proceed to Task\n" +
@@ -44,7 +44,7 @@ public class OswdTest {
         assertThat(process.getName(), is("AProcess"));
         assertThat(process.getVersion(), is(11));
         assertThat(process.getSubjects(), contains(
-                        isSubjectName("ASubject")
+                isSubjectName("ASubject")
         ));
 
         Subject aSubject = process.getSubjects().stream()
@@ -83,7 +83,10 @@ public class OswdTest {
 
         assertThat(aTask.getBusinessObject().getAttributes(),
                 contains(
-                        isAttribute("AField")
+                        allOf(
+                                isAttribute("AField"),
+                                isAttributeType(AttributeType.TEXT)
+                        )
                 )
         );
 
@@ -159,7 +162,7 @@ public class OswdTest {
     }
 
     private static CustomTypeSafeMatcher<? super ShowTask> isObjectName(String name) {
-        return new CustomTypeSafeMatcher<>("task with name " + name) {
+        return new CustomTypeSafeMatcher<>("Object with name " + name) {
             @Override
             protected boolean matchesSafely(ShowTask task) {
                 return is(name).matches(task.getBusinessObject().getName());
@@ -168,7 +171,7 @@ public class OswdTest {
     }
 
     private static CustomTypeSafeMatcher<Attribute> isAttribute(String name) {
-        return new CustomTypeSafeMatcher<>("task with name " + name) {
+        return new CustomTypeSafeMatcher<>("Attribute with name " + name) {
             @Override
             protected boolean matchesSafely(Attribute attribute) {
                 return is(name).matches(attribute.getName());
@@ -176,5 +179,13 @@ public class OswdTest {
         };
     }
 
+    private static CustomTypeSafeMatcher<Attribute> isAttributeType(AttributeType attributeType) {
+        return new CustomTypeSafeMatcher<>("Attribute with type " + attributeType) {
+            @Override
+            protected boolean matchesSafely(Attribute attribute) {
+                return is(attributeType).matches(attribute.getAttributeType());
+            }
+        };
+    }
 
 }

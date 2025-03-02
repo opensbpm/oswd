@@ -7,6 +7,7 @@ import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.parser.OswdParser.AttributeContext;
 import org.opensbpm.oswd.parser.OswdParser.AttributeNameContext;
+import org.opensbpm.oswd.parser.OswdParser.AttributeTypeContext;
 import org.opensbpm.oswd.parser.OswdParser.DefinitionContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessNameContext;
@@ -172,6 +173,13 @@ public class ProcessParser {
 
             contextStack.peek(objectItem((ObjectContext) ctx.parent))
                     .addAttribute(attribute);
+        }
+
+        @Override
+        public void enterAttributeType(AttributeTypeContext ctx) {
+            contextStack.peek(attributeItem((AttributeContext)ctx.parent))
+                    .withType(AttributeType.tokenOf(ctx.getText().trim()));
+
         }
 
         @Override
