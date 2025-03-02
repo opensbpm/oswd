@@ -12,7 +12,7 @@ roleName    : SPACE IDENTIFIER CRLF;
 
 task        : taskName (show | send | receive);
 taskName    : SPACE* IDENTIFIER SPACE;
-show        : 'show' object CRLF proceed;
+show        : 'show' object proceed;
 send        : 'send' SPACE IDENTIFIER SPACE 'to' SPACE IDENTIFIER CRLF proceed;
 receive     : 'receive' SPACE message+;
 message     : SPACE* IDENTIFIER SPACE proceed;
@@ -20,9 +20,8 @@ message     : SPACE* IDENTIFIER SPACE proceed;
 object      : objectName attribute+;
 objectName  : SPACE IDENTIFIER CRLF;
 
-attribute   : SPACE* 'with' attributeName 'as' attributeType required? readonly?;
+attribute   : SPACE* 'with' attributeName 'as' attributeType required? readonly? CRLF;
 attributeName: SPACE IDENTIFIER SPACE;
-
 attributeType : SPACE ('bool' | 'number' | 'date' | 'text');
 required    : SPACE 'required';
 readonly    : SPACE 'readonly';
