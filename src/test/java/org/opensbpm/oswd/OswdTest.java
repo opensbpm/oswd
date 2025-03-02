@@ -29,6 +29,7 @@ public class OswdTest {
                 " ASubject with role ARole\n" +
                 "  ATask show AObject\n" +
                 "   with AField as text required readonly\n" +
+//                "   with BField as number\n" +
                 "   proceed to Task\n" +
                 "  BTask send Object to Subject\n" +
                 "   proceed to Task\n" +
@@ -85,7 +86,15 @@ public class OswdTest {
                 contains(
                         allOf(
                                 isAttribute("AField"),
-                                isAttributeType(AttributeType.TEXT)
+                                isAttributeType(AttributeType.TEXT),
+                                isRequired(true),
+                                isReadonly(true)
+//                        ),
+//                        allOf(
+//                                isAttribute("BField"),
+//                                isAttributeType(AttributeType.NUMBER),
+//                                isRequired(false),
+//                                isReadonly(false)
                         )
                 )
         );
@@ -184,6 +193,24 @@ public class OswdTest {
             @Override
             protected boolean matchesSafely(Attribute attribute) {
                 return is(attributeType).matches(attribute.getAttributeType());
+            }
+        };
+    }
+
+    private static CustomTypeSafeMatcher<Attribute> isRequired(boolean required) {
+        return new CustomTypeSafeMatcher<>("Attribute with required " + required) {
+            @Override
+            protected boolean matchesSafely(Attribute attribute) {
+                return is(required).matches(attribute.isRequired());
+            }
+        };
+    }
+
+    private static CustomTypeSafeMatcher<Attribute> isReadonly(boolean readonly) {
+        return new CustomTypeSafeMatcher<>("Attribute with readonly " + readonly) {
+            @Override
+            protected boolean matchesSafely(Attribute attribute) {
+                return is(readonly).matches(attribute.isReadonly());
             }
         };
     }

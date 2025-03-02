@@ -250,6 +250,8 @@ public class ModelBuilderFactory {
     public static class AttributeBuilder extends AbstractBuilder<AttributeBuilder> {
 
         private AttributeType attributeType;
+        private boolean required;
+        private boolean readonly;
 
         @Override
         protected AttributeBuilder self() {
@@ -261,6 +263,15 @@ public class ModelBuilderFactory {
             return this;
         }
 
+        public AttributeBuilder asRequired() {
+            this.required = true;
+            return this;
+        }
+
+        public AttributeBuilder asReadonly() {
+            this.readonly = true;
+            return this;
+        }
 
         public Attribute build() {
             return new Attribute() {
@@ -273,6 +284,16 @@ public class ModelBuilderFactory {
                 @Override
                 public AttributeType getAttributeType() {
                     return attributeType;
+                }
+
+                @Override
+                public boolean isRequired() {
+                    return required;
+                }
+
+                @Override
+                public boolean isReadonly() {
+                    return readonly;
                 }
             };
         }

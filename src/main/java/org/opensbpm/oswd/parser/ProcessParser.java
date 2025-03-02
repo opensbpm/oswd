@@ -20,7 +20,7 @@ import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectNameContext;
 import org.opensbpm.oswd.parser.OswdParser.TaskContext;
 import org.opensbpm.oswd.parser.OswdParser.ShowContext;
-
+import org.opensbpm.oswd.ModelBuilderFactory.AttributeBuilder;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -157,13 +157,14 @@ public class ProcessParser {
 
         @Override
         public void enterAttribute(AttributeContext ctx) {
-            contextStack.register(attributeItem(ctx));
-        }
+            AttributeBuilder attributeBuilder = contextStack.register(attributeItem(ctx))
+                    .withName(ctx.attributeName().IDENTIFIER().getText());
 
-        @Override
-        public void enterAttributeName(AttributeNameContext ctx) {
-            contextStack.peek(attributeItem((AttributeContext)ctx.parent))
-                    .withName(ctx.IDENTIFIER().getText());
+            Optional.ofNullable(ctx.required())
+                    .ifPresent(atxC -> attributeBuilder.asRequired());
+
+            Optional.ofNullable(ctx.readonly())
+                    .ifPresent(atxC -> attributeBuilder.asReadonly());
         }
 
         @Override
