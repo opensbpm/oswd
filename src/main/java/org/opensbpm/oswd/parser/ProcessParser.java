@@ -18,9 +18,12 @@ import org.opensbpm.oswd.parser.OswdParser.RoleNameContext;
 import org.opensbpm.oswd.parser.OswdParser.VersionContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectNameContext;
+import org.opensbpm.oswd.parser.OswdParser.ObjectNameReferenceContext;
 import org.opensbpm.oswd.parser.OswdParser.TaskContext;
 import org.opensbpm.oswd.parser.OswdParser.ShowContext;
+import org.opensbpm.oswd.parser.OswdParser.SendContext;
 import org.opensbpm.oswd.ModelBuilderFactory.AttributeBuilder;
+
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -152,7 +155,7 @@ public class ProcessParser {
 
         @Override
         public void enterObjectName(ObjectNameContext ctx) {
-            contextStack.peek(objectItem((ObjectContext)ctx.parent))
+            contextStack.peek(objectItem((ObjectContext) ctx.parent))
                     .withName(ctx.IDENTIFIER().getText());
         }
 
@@ -179,9 +182,15 @@ public class ProcessParser {
 
         @Override
         public void enterAttributeType(AttributeTypeContext ctx) {
-            contextStack.peek(attributeItem((AttributeContext)ctx.parent))
+            contextStack.peek(attributeItem((AttributeContext) ctx.parent))
                     .withType(AttributeType.tokenOf(ctx.getText().trim()));
 
+        }
+
+        @Override
+        public void enterObjectNameReference(ObjectNameReferenceContext ctx) {
+                    contextStack.peek(sendItem((SendContext) ctx.parent))
+                            .withObjectNameReference(ctx.getText().trim());
         }
 
         public Process getProcess() {
@@ -190,7 +199,7 @@ public class ProcessParser {
 
         @SafeVarargs
         private static <T> T toExactlyOne(Optional<T>... optionals) {
-            return  Stream.of(optionals)
+            return Stream.of(optionals)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .reduce((a, b) -> {

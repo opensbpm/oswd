@@ -1,5 +1,6 @@
 package org.opensbpm.oswd;
 
+import org.apache.commons.jxpath.JXPathContext;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -33,7 +34,7 @@ public class OswdTest {
                 "   with AField as text required readonly\n" +
                 "   with BField as number\n" +
                 "   proceed to BTask\n" +
-                "  BTask send Object to Subject\n" +
+                "  BTask send AObject to ASubject\n" +
                 "   proceed to Task\n" +
                 "  CTask receive Object1 proceed to Task\n" +
                 "   Object2 proceed to Task\n" +
@@ -44,6 +45,7 @@ public class OswdTest {
         Process process = ProcessParser.parseProcess(content);
 
         //assert
+        JXPathContext jxPathContext = JXPathContext.newContext(process);
 
         assertThat(process.getName(), is("AProcess"));
         assertThat(process.getVersion(), is(11));
@@ -80,6 +82,7 @@ public class OswdTest {
                 .findFirst()
                 .map(ShowTask.class::cast)
                 .orElseThrow();
+
         assertThat(aTask, allOf(
                 isTaskName("ATask"),
                 isObjectName("AObject"),
@@ -92,6 +95,14 @@ public class OswdTest {
                         isAttribute("BField", AttributeType.NUMBER, false, false)
                 )
         );
+
+        SendTask bTask = (SendTask)jxPathContext.getValue("subjects[name='ASubject']/tasks[name='BTask']");
+        assertThat(bTask, allOf(
+                isTaskName("BTask"),
+                isObjectNameReference("AObject")
+//                isProceedTo("BTask")
+        ));
+
 
     }
 

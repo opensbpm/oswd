@@ -13,7 +13,8 @@ roleName    : SPACE IDENTIFIER CRLF;
 task        : taskName (show | send | receive);
 taskName    : SPACE* IDENTIFIER SPACE;
 show        : 'show' object proceed CRLF;
-send        : 'send' SPACE IDENTIFIER SPACE 'to' SPACE IDENTIFIER CRLF proceed CRLF;
+send        : 'send' objectNameReference 'to' SPACE IDENTIFIER CRLF proceed CRLF;
+objectNameReference  : SPACE IDENTIFIER SPACE;
 receive     : 'receive' SPACE message+;
 message     : SPACE* IDENTIFIER SPACE proceed CRLF;
 

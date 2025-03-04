@@ -1,5 +1,8 @@
 package org.opensbpm.oswd;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +42,7 @@ public class ModelBuilderFactory {
         public T build();
     }
 
-    public static abstract class AbstractBuilder<T, B extends AbstractBuilder<T,B>> implements ModelBuilder<T> {
+    public static abstract class AbstractBuilder<T, B extends AbstractBuilder<T, B>> implements ModelBuilder<T> {
         protected String name;
 
         protected abstract B self();
@@ -180,10 +183,16 @@ public class ModelBuilderFactory {
     }
 
     public static class SendTaskBuilder extends AbstractTaskBuilder<SendTask, SendTaskBuilder> {
+        private String objectNameReference;
 
         @Override
         protected SendTaskBuilder self() {
             return this;
+        }
+
+        public SendTaskBuilder withObjectNameReference(String objectNameReference) {
+            this.objectNameReference = Objects.requireNonNull(objectNameReference, "objectNameReference must not be null");
+            return self();
         }
 
         public SendTask build() {
@@ -192,6 +201,19 @@ public class ModelBuilderFactory {
                 @Override
                 public String getName() {
                     return name;
+                }
+
+                @Override
+                public String getObjectNameReference() {
+                    return objectNameReference;
+                }
+
+                @Override
+                public String toString() {
+                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+                            append("name", name).
+                            append("objectNameReference", objectNameReference).
+                            toString();
                 }
             };
         }

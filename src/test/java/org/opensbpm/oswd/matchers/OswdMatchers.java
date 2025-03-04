@@ -4,6 +4,7 @@ import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.opensbpm.oswd.ShowTask;
+import org.opensbpm.oswd.SendTask;
 import org.opensbpm.oswd.Subject;
 import org.opensbpm.oswd.Task;
 
@@ -68,7 +69,7 @@ public class OswdMatchers {
 
         StringDescription description = new StringDescription();
         allOf(matchers).describeTo(description);
-        return new CustomTypeSafeMatcher<>("tasks " + description.toString()) {
+        return new CustomTypeSafeMatcher<>("Tasks " + description.toString()) {
             @Override
             protected boolean matchesSafely(Task task) {
                 return allOf(matchers).matches(task);
@@ -77,7 +78,7 @@ public class OswdMatchers {
     }
 
     public static CustomTypeSafeMatcher<Task> isTaskName(String name) {
-        return new CustomTypeSafeMatcher<>("task with name " + name) {
+        return new CustomTypeSafeMatcher<>("Task with name " + name) {
             @Override
             protected boolean matchesSafely(Task task) {
                 return is(name).matches(task.getName());
@@ -86,7 +87,7 @@ public class OswdMatchers {
     }
 
     public static CustomTypeSafeMatcher<? super ShowTask> isObjectName(String name) {
-        return new CustomTypeSafeMatcher<>("Object with name " + name) {
+        return new CustomTypeSafeMatcher<>("ShowTask with name " + name) {
             @Override
             protected boolean matchesSafely(ShowTask task) {
                 return is(name).matches(task.getBusinessObject().getName());
@@ -95,10 +96,19 @@ public class OswdMatchers {
     }
 
     public static CustomTypeSafeMatcher<ShowTask> isProceedTo(String name) {
-        return new CustomTypeSafeMatcher<>("task with name " + name) {
+        return new CustomTypeSafeMatcher<>("ShowTask with name " + name) {
             @Override
             protected boolean matchesSafely(ShowTask task) {
                 return is(name).matches(task.getProceedTo());
+            }
+        };
+    }
+
+    public static CustomTypeSafeMatcher<? super SendTask> isObjectNameReference(String name) {
+        return new CustomTypeSafeMatcher<>("SendTask with object name reference " + name) {
+            @Override
+            protected boolean matchesSafely(SendTask task) {
+                return is(name).matches(task.getObjectNameReference());
             }
         };
     }
