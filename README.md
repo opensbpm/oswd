@@ -1,7 +1,7 @@
-# DSL for OpenSBPM
+# OpenSBPM Workflow Definition
 
 ## Overview
-This repository contains the implementation of a **domain-specific language (DSL)** for defining **subject-oriented business processes** in **OpenSBPM**. The DSL is written in **Groovy** and allows intuitive process modeling using a subject-verb structure.
+OpenSBPM Workflow Definition (OSWD) is a human-readable and intuitive domain-specific language to build workflow definitions for OpenSBPM. OSWD tries to follow native spoken languages.  This repository contains the implementation of a domain-specific language (DSL) for defining subject-oriented business processes in OpenSBPM. The DSL is written in Groovy and allows intuitive process modeling using a subject-verb structure.
 
 ## Features
 - **Subjekt-Verb Syntax** for defining processes
@@ -22,6 +22,6 @@ This repository contains the implementation of a **domain-specific language (DSL
 ## License
 This project is licensed under **GPLv3**.
 
-## Contact
+## Contact     
 For questions, open an issue or reach out via GitHub!
 
