@@ -9,6 +9,6 @@ public interface ReceiveTask extends Task {
     interface Message{
 
         String getObjectNameReference();
-        String taskNameReference();
+        String getTaskNameReference();
     }
 }

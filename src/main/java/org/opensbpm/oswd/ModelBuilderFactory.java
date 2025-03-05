@@ -260,9 +260,18 @@ public class ModelBuilderFactory {
                 }
 
                 @Override
-                public String taskNameReference() {
+                public String getTaskNameReference() {
                     return taskNameReference;
                 }
+
+                @Override
+                public String toString() {
+                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+                            append("objectNameReference", objectNameReference).
+                            append("taskNameReference", taskNameReference).
+                            toString();
+                }
+
             });
             return self();
         }
@@ -279,6 +288,15 @@ public class ModelBuilderFactory {
                 public Collection<Message> getMessages() {
                     return Collections.unmodifiableCollection(messages);
                 }
+
+                @Override
+                public String toString() {
+                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+                            append("name", name).
+                            append("messages", messages).
+                            toString();
+                }
+
             };
         }
     }

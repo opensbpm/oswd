@@ -36,8 +36,8 @@ public class OswdTest {
                 "   proceed to BTask\n" +
                 "  BTask send AObject to ASubject\n" +
                 "   proceed to CTask\n" +
-                "  CTask receive Object1 proceed to Task\n" +
-                "   Object2 proceed to Task\n" +
+                "  CTask receive Object1 proceed to ATask\n" +
+                "   Object2 proceed to BTask\n" +
                 "";
         System.out.println(content);
 
@@ -91,12 +91,12 @@ public class OswdTest {
 
         assertThat(aTask.getBusinessObject().getAttributes(),
                 contains(
-                        isAttribute("AField", AttributeType.TEXT, true,true),
+                        isAttribute("AField", AttributeType.TEXT, true, true),
                         isAttribute("BField", AttributeType.NUMBER, false, false)
                 )
         );
 
-        SendTask bTask = (SendTask)jxPathContext.getValue("subjects[name='ASubject']/tasks[name='BTask']");
+        SendTask bTask = (SendTask) jxPathContext.getValue("subjects[name='ASubject']/tasks[name='BTask']");
         assertThat(bTask, allOf(
                 isTaskName("BTask"),
                 isObjectNameReference("AObject"),
@@ -104,7 +104,17 @@ public class OswdTest {
                 isSendProceedTo("CTask")
         ));
 
+        ReceiveTask cTask = (ReceiveTask) jxPathContext.getValue("subjects[name='ASubject']/tasks[name='CTask']");
+        assertThat(cTask, allOf(
+                isTaskName("CTask"),
+                containsMessages(
+                        isMessage("Object1", "ATask"),
+                        isMessage("Object2", "BTask")
+                )
+        ));
+
 
     }
+
 
 }

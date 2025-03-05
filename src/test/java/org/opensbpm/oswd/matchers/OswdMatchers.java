@@ -7,6 +7,8 @@ import org.opensbpm.oswd.ShowTask;
 import org.opensbpm.oswd.SendTask;
 import org.opensbpm.oswd.Subject;
 import org.opensbpm.oswd.Task;
+import org.opensbpm.oswd.ReceiveTask;
+import org.opensbpm.oswd.ReceiveTask.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,6 +132,46 @@ public class OswdMatchers {
             }
         };
     }
+
+    public static CustomTypeSafeMatcher<ReceiveTask> containsMessages(Matcher<? super Message> matcher, Matcher<? super Message>... additionals) {
+        ArrayList<Matcher<? super Message>> matchers = new ArrayList<>(List.of(matcher));
+        matchers.addAll(asList(additionals));
+
+        StringDescription description = new StringDescription();
+        allOf(matchers).describeTo(description);
+        return new CustomTypeSafeMatcher<>("tasks " + description.toString()) {
+            @Override
+            protected boolean matchesSafely(ReceiveTask receiveTask) {
+                return contains(matchers).matches(receiveTask.getMessages());
+            }
+        };
+    }
+
+    public static Matcher<Message> isMessage(String objectName, String taskName) {
+        return allOf(
+                isMessageObjectNameReference(objectName),
+                isMessageTaskNameReference(taskName)
+        );
+    }
+
+    public static CustomTypeSafeMatcher<? super Message> isMessageObjectNameReference(String name) {
+        return new CustomTypeSafeMatcher<>("Message with object name reference " + name) {
+            @Override
+            protected boolean matchesSafely(Message task) {
+                return is(name).matches(task.getObjectNameReference());
+            }
+        };
+    }
+
+    public static CustomTypeSafeMatcher<? super Message> isMessageTaskNameReference(String name) {
+        return new CustomTypeSafeMatcher<>("Message with task name reference " + name) {
+            @Override
+            protected boolean matchesSafely(Message task) {
+                return is(name).matches(task.getTaskNameReference());
+            }
+        };
+    }
+
 
 
 
