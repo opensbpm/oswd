@@ -12,12 +12,12 @@ roleName    : SPACE IDENTIFIER CRLF;
 
 task        : taskName (show | send | receive);
 taskName    : SPACE* IDENTIFIER SPACE;
-show        : 'show' object proceed CRLF;
-send        : 'send' objectNameReference 'to' subjectNameReference proceed CRLF;
+show        : 'show' object SPACE* proceed CRLF;
+send        : 'send' objectNameReference 'to' subjectNameReference SPACE* proceed CRLF;
 objectNameReference : SPACE IDENTIFIER SPACE;
 subjectNameReference : SPACE IDENTIFIER (SPACE+|CRLF);
-receive     : 'receive' SPACE message+;
-message     : SPACE* IDENTIFIER SPACE proceed CRLF;
+receive     : 'receive' message+;
+message     : objectNameReference proceed CRLF;
 
 object      : objectName attribute+;
 objectName  : SPACE IDENTIFIER CRLF;
@@ -28,7 +28,7 @@ attributeType : SPACE ('bool' | 'number' | 'date' | 'text');
 required    : SPACE 'required';
 readonly    : SPACE 'readonly';
 
-proceed : SPACE* 'proceed to' taskNameReference;
+proceed : 'proceed to' taskNameReference;
 taskNameReference : SPACE IDENTIFIER SPACE*;
 
 INT         : [0-9]+ ;

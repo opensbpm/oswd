@@ -6,12 +6,12 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.parser.OswdParser.AttributeContext;
-import org.opensbpm.oswd.parser.OswdParser.AttributeNameContext;
+import org.opensbpm.oswd.parser.OswdParser.MessageContext;
 import org.opensbpm.oswd.parser.OswdParser.AttributeTypeContext;
 import org.opensbpm.oswd.parser.OswdParser.DefinitionContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessNameContext;
-import org.opensbpm.oswd.parser.OswdParser.ProceedContext;
+import org.opensbpm.oswd.parser.OswdParser.ReceiveContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectNameContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectNameReferenceContext;
@@ -189,15 +189,26 @@ public class ProcessParser {
         }
 
         @Override
-        public void enterObjectNameReference(ObjectNameReferenceContext ctx) {
-            contextStack.peek(sendItem((SendContext) ctx.parent))
-                    .withObjectNameReference(ctx.getText().trim());
+        public void enterSend(SendContext ctx) {
+            contextStack.peek(sendItem(ctx))
+                    .withObjectNameReference(ctx.objectNameReference().IDENTIFIER().getText())
+                    .withProceedTo(ctx.proceed().taskNameReference().IDENTIFIER().getText())
+            ;
         }
 
         @Override
         public void enterSubjectNameReference(SubjectNameReferenceContext ctx) {
             contextStack.peek(sendItem((SendContext) ctx.parent))
-                    .withReceiverSubjectName(ctx.getText().trim());
+                    .withReceiverSubjectName(ctx.IDENTIFIER().getText());
+        }
+
+        @Override
+        public void enterMessage(MessageContext ctx) {
+            contextStack.peek(receiveItem((ReceiveContext) ctx.parent))
+                    .addMessage(
+                            ctx.objectNameReference().IDENTIFIER().getText(),
+                            ctx.proceed().taskNameReference().IDENTIFIER().getText()
+                    );
         }
 
         public Process getProcess() {

@@ -95,7 +95,7 @@ public class OswdMatchers {
         };
     }
 
-    public static CustomTypeSafeMatcher<ShowTask> isProceedTo(String name) {
+    public static CustomTypeSafeMatcher<ShowTask> isShowProceedTo(String name) {
         return new CustomTypeSafeMatcher<>("ShowTask with name " + name) {
             @Override
             protected boolean matchesSafely(ShowTask task) {
@@ -121,6 +121,16 @@ public class OswdMatchers {
             }
         };
     }
+
+    public static CustomTypeSafeMatcher<SendTask> isSendProceedTo(String name) {
+        return new CustomTypeSafeMatcher<>("SendTask with name " + name) {
+            @Override
+            protected boolean matchesSafely(SendTask task) {
+                return is(name).matches(task.getProceedTo());
+            }
+        };
+    }
+
 
 
     public OswdMatchers() {

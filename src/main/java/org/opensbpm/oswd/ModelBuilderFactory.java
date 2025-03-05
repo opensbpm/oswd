@@ -3,10 +3,9 @@ package org.opensbpm.oswd;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import org.opensbpm.oswd.ReceiveTask.Message;
+
+import java.util.*;
 
 public class ModelBuilderFactory {
 
@@ -185,6 +184,7 @@ public class ModelBuilderFactory {
     public static class SendTaskBuilder extends AbstractTaskBuilder<SendTask, SendTaskBuilder> {
         private String objectNameReference;
         private String receiverSubjectName;
+        private String proceedTo;
 
         @Override
         protected SendTaskBuilder self() {
@@ -198,6 +198,11 @@ public class ModelBuilderFactory {
 
         public SendTaskBuilder withReceiverSubjectName(String receiverSubjectName) {
             this.receiverSubjectName = Objects.requireNonNull(receiverSubjectName, "receiverSubjectName must not be null");
+            return self();
+        }
+
+        public SendTaskBuilder withProceedTo(String taskName) {
+            this.proceedTo = Objects.requireNonNull(taskName, "taskName must not be null");
             return self();
         }
 
@@ -220,11 +225,17 @@ public class ModelBuilderFactory {
                 }
 
                 @Override
+                public String getProceedTo() {
+                    return proceedTo;
+                }
+
+                @Override
                 public String toString() {
                     return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
                             append("name", name).
                             append("objectNameReference", objectNameReference).
                             append("receiverSubjectName", receiverSubjectName).
+                            append("proceedTo", proceedTo).
                             toString();
                 }
             };
@@ -233,9 +244,27 @@ public class ModelBuilderFactory {
 
     public static class ReceiveTaskBuilder extends AbstractTaskBuilder<ReceiveTask, ReceiveTaskBuilder> {
 
+        private Collection<Message> messages = new ArrayList<>();
+
         @Override
         protected ReceiveTaskBuilder self() {
             return this;
+        }
+
+        public ReceiveTaskBuilder addMessage(String objectNameReference, String taskNameReference) {
+            this.messages.add(new Message() {
+
+                @Override
+                public String getObjectNameReference() {
+                    return objectNameReference;
+                }
+
+                @Override
+                public String taskNameReference() {
+                    return taskNameReference;
+                }
+            });
+            return self();
         }
 
         public ReceiveTask build() {
@@ -244,6 +273,11 @@ public class ModelBuilderFactory {
                 @Override
                 public String getName() {
                     return name;
+                }
+
+                @Override
+                public Collection<Message> getMessages() {
+                    return Collections.unmodifiableCollection(messages);
                 }
             };
         }
