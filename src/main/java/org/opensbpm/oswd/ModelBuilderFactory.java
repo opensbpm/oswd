@@ -184,6 +184,7 @@ public class ModelBuilderFactory {
 
     public static class SendTaskBuilder extends AbstractTaskBuilder<SendTask, SendTaskBuilder> {
         private String objectNameReference;
+        private String receiverSubjectName;
 
         @Override
         protected SendTaskBuilder self() {
@@ -192,6 +193,11 @@ public class ModelBuilderFactory {
 
         public SendTaskBuilder withObjectNameReference(String objectNameReference) {
             this.objectNameReference = Objects.requireNonNull(objectNameReference, "objectNameReference must not be null");
+            return self();
+        }
+
+        public SendTaskBuilder withReceiverSubjectName(String receiverSubjectName) {
+            this.receiverSubjectName = Objects.requireNonNull(receiverSubjectName, "receiverSubjectName must not be null");
             return self();
         }
 
@@ -209,10 +215,16 @@ public class ModelBuilderFactory {
                 }
 
                 @Override
+                public String getReceiverSubjectName() {
+                    return receiverSubjectName;
+                }
+
+                @Override
                 public String toString() {
                     return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
                             append("name", name).
                             append("objectNameReference", objectNameReference).
+                            append("receiverSubjectName", receiverSubjectName).
                             toString();
                 }
             };

@@ -113,6 +113,15 @@ public class OswdMatchers {
         };
     }
 
+    public static CustomTypeSafeMatcher<? super SendTask> isReceiverSubjectName(String name) {
+        return new CustomTypeSafeMatcher<>("SendTask with receiver subject name " + name) {
+            @Override
+            protected boolean matchesSafely(SendTask task) {
+                return is(name).matches(task.getReceiverSubjectName());
+            }
+        };
+    }
+
 
     public OswdMatchers() {
         //avoid instantiation

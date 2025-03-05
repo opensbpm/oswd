@@ -6,4 +6,6 @@ public interface SendTask extends Task {
 
     String getObjectNameReference();
 
+    String getReceiverSubjectName();
+
 }

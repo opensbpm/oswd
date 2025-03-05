@@ -99,7 +99,8 @@ public class OswdTest {
         SendTask bTask = (SendTask)jxPathContext.getValue("subjects[name='ASubject']/tasks[name='BTask']");
         assertThat(bTask, allOf(
                 isTaskName("BTask"),
-                isObjectNameReference("AObject")
+                isObjectNameReference("AObject"),
+                isReceiverSubjectName("ASubject")
 //                isProceedTo("BTask")
         ));
 

@@ -13,8 +13,9 @@ roleName    : SPACE IDENTIFIER CRLF;
 task        : taskName (show | send | receive);
 taskName    : SPACE* IDENTIFIER SPACE;
 show        : 'show' object proceed CRLF;
-send        : 'send' objectNameReference 'to' SPACE IDENTIFIER CRLF proceed CRLF;
-objectNameReference  : SPACE IDENTIFIER SPACE;
+send        : 'send' objectNameReference 'to' subjectNameReference proceed CRLF;
+objectNameReference : SPACE IDENTIFIER SPACE;
+subjectNameReference : SPACE IDENTIFIER (SPACE+|CRLF);
 receive     : 'receive' SPACE message+;
 message     : SPACE* IDENTIFIER SPACE proceed CRLF;
 
@@ -28,7 +29,7 @@ required    : SPACE 'required';
 readonly    : SPACE 'readonly';
 
 proceed : SPACE* 'proceed to' taskNameReference;
-taskNameReference: SPACE IDENTIFIER SPACE*;
+taskNameReference : SPACE IDENTIFIER SPACE*;
 
 INT         : [0-9]+ ;
 IDENTIFIER  : [a-zA-Z0-9]+ ;

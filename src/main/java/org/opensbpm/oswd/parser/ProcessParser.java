@@ -14,6 +14,7 @@ import org.opensbpm.oswd.parser.OswdParser.ProcessNameContext;
 import org.opensbpm.oswd.parser.OswdParser.ProceedContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectNameContext;
+import org.opensbpm.oswd.parser.OswdParser.SubjectNameReferenceContext;
 import org.opensbpm.oswd.parser.OswdParser.RoleNameContext;
 import org.opensbpm.oswd.parser.OswdParser.VersionContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
@@ -189,8 +190,14 @@ public class ProcessParser {
 
         @Override
         public void enterObjectNameReference(ObjectNameReferenceContext ctx) {
-                    contextStack.peek(sendItem((SendContext) ctx.parent))
-                            .withObjectNameReference(ctx.getText().trim());
+            contextStack.peek(sendItem((SendContext) ctx.parent))
+                    .withObjectNameReference(ctx.getText().trim());
+        }
+
+        @Override
+        public void enterSubjectNameReference(SubjectNameReferenceContext ctx) {
+            contextStack.peek(sendItem((SendContext) ctx.parent))
+                    .withReceiverSubjectName(ctx.getText().trim());
         }
 
         public Process getProcess() {
