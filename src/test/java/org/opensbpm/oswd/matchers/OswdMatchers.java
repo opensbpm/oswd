@@ -51,6 +51,15 @@ public class OswdMatchers {
         };
     }
 
+    public static CustomTypeSafeMatcher<Subject> hasTasksSize(int size) {
+        return new CustomTypeSafeMatcher<>("tasks size " + size) {
+            @Override
+            protected boolean matchesSafely(Subject subject) {
+                return hasSize(size).matches(subject.getTasks());
+            }
+        };
+    }
+
     public static CustomTypeSafeMatcher<Subject> containsTasks(Matcher<? super Task> matcher, Matcher<? super Task>... additionals) {
         ArrayList<Matcher<? super Task>> matchers = new ArrayList<>(List.of(matcher));
         matchers.addAll(asList(additionals));

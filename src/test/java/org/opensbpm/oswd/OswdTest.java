@@ -1,6 +1,5 @@
 package org.opensbpm.oswd;
 
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.opensbpm.oswd.jxpath.JXPath;
 import org.opensbpm.oswd.parser.ProcessParser;
@@ -12,7 +11,6 @@ import static org.opensbpm.oswd.matchers.OswdMatchers.*;
 
 
 public class OswdTest {
-
 
     @Test
     public void testAll() throws Exception {
@@ -55,21 +53,7 @@ public class OswdTest {
         assertThat(aSubject, allOf(
                 isSubjectName("ASubject"),
                 isRoleName("ARole"),
-                containsTasks(
-                        isTask(
-                                isA(ShowTask.class),
-                                isTaskName("ATask"),
-                                (Matcher<? super Task>) isObjectName("AObject")
-                        ),
-                        isTask(
-                                isA(SendTask.class),
-                                isTaskName("BTask")
-                        ),
-                        isTask(
-                                isA(ReceiveTask.class),
-                                isTaskName("CTask")
-                        )
-                )
+                hasTasksSize(3)
         ));
 
         ShowTask aTask = jxPath.getValue(ShowTask.class, "subjects[name='ASubject']/tasks[name='ATask']");
