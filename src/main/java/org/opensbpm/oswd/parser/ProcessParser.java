@@ -74,6 +74,7 @@ public class ProcessParser {
                     .build();
         }
 
+        @Override
         public void enterProcessName(ProcessNameContext ctx) {
             contextStack.peek(processItem((ProcessContext) ctx.parent))
                     .withName(ctx.IDENTIFIER().getText());
