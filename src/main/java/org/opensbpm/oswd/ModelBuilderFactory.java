@@ -384,4 +384,8 @@ public class ModelBuilderFactory {
             };
         }
     }
+
+    private ModelBuilderFactory() {
+        //avoid instantiation
+    }
 }

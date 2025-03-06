@@ -96,4 +96,7 @@ public class ContextStackFactory {
         };
     }
 
+    private ContextStackFactory() {
+        //avoid instantiation
+    }
 }

@@ -226,4 +226,8 @@ public class ProcessParser {
                     .orElseThrow(() -> new IllegalStateException("No item"));
         }
     }
+
+    private ProcessParser() {
+        //avoid instantiation
+    }
 }
