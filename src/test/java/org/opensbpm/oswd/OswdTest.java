@@ -1,15 +1,10 @@
 package org.opensbpm.oswd;
 
-import org.apache.commons.jxpath.JXPathContext;
-import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
+import org.opensbpm.oswd.jxpath.JXPath;
 import org.opensbpm.oswd.parser.ProcessParser;
 
-import java.util.*;
-
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.opensbpm.oswd.matchers.AttributeMatchers.isAttribute;
@@ -45,7 +40,7 @@ public class OswdTest {
         Process process = ProcessParser.parseProcess(content);
 
         //assert
-        JXPathContext jxPathContext = JXPathContext.newContext(process);
+        JXPath<Process> jxPath = new JXPath<>(process);
 
         assertThat(process.getName(), is("AProcess"));
         assertThat(process.getVersion(), is(11));
@@ -77,12 +72,7 @@ public class OswdTest {
                 )
         ));
 
-        ShowTask aTask = aSubject.getTasks().stream()
-                .filter(task -> "ATask".equals(task.getName()))
-                .findFirst()
-                .map(ShowTask.class::cast)
-                .orElseThrow();
-
+        ShowTask aTask = jxPath.getValue(ShowTask.class, "subjects[name='ASubject']/tasks[name='ATask']");
         assertThat(aTask, allOf(
                 isTaskName("ATask"),
                 isObjectName("AObject"),
@@ -96,7 +86,7 @@ public class OswdTest {
                 )
         );
 
-        SendTask bTask = (SendTask) jxPathContext.getValue("subjects[name='ASubject']/tasks[name='BTask']");
+        SendTask bTask = jxPath.getValue(SendTask.class, "subjects[name='ASubject']/tasks[name='BTask']");
         assertThat(bTask, allOf(
                 isTaskName("BTask"),
                 isObjectNameReference("AObject"),
@@ -104,7 +94,7 @@ public class OswdTest {
                 isSendProceedTo("CTask")
         ));
 
-        ReceiveTask cTask = (ReceiveTask) jxPathContext.getValue("subjects[name='ASubject']/tasks[name='CTask']");
+        ReceiveTask cTask = jxPath.getValue(ReceiveTask.class, "subjects[name='ASubject']/tasks[name='CTask']");
         assertThat(cTask, allOf(
                 isTaskName("CTask"),
                 containsMessages(
@@ -113,8 +103,6 @@ public class OswdTest {
                 )
         ));
 
-
     }
-
 
 }
