@@ -98,6 +98,16 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <formats>XML</formats>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
