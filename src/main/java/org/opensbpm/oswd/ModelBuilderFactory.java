@@ -7,6 +7,9 @@ import org.opensbpm.oswd.ReceiveTask.Message;
 
 import java.util.*;
 
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.Objects.requireNonNull;
+
 public class ModelBuilderFactory {
 
     public static ProcessBuilder createProcessBuilder() {
@@ -47,7 +50,7 @@ public class ModelBuilderFactory {
         protected abstract B self();
 
         public final B withName(String name) {
-            this.name = Objects.requireNonNull(name, "Name must not be null");
+            this.name = requireNonNull(name, "Name must not be null");
             return self();
         }
 
@@ -86,7 +89,7 @@ public class ModelBuilderFactory {
 
                 @Override
                 public Collection<Subject> getSubjects() {
-                    return new ArrayList<>(subjects);
+                    return unmodifiableCollection(subjects);
                 }
             };
         }
@@ -102,7 +105,7 @@ public class ModelBuilderFactory {
         }
 
         public SubjectBuilder withRoleName(String name) {
-            this.roleName = Objects.requireNonNull(name, "Role name must not be null");
+            this.roleName = requireNonNull(name, "Role name must not be null");
             return self();
         }
 
@@ -129,7 +132,7 @@ public class ModelBuilderFactory {
                 }
 
                 public Collection<Task> getTasks() {
-                    return tasks;
+                    return unmodifiableCollection(tasks);
                 }
             };
         }
@@ -150,13 +153,13 @@ public class ModelBuilderFactory {
         }
 
         public ShowTaskBuilder withBusinessObject(BusinessObject businessObject) {
-            this.businessObject = Objects.requireNonNull(businessObject, "BusinessObject name must not be null");
+            this.businessObject = requireNonNull(businessObject, "BusinessObject name must not be null");
             return self();
         }
 
 
         public ShowTaskBuilder withProceedTo(String taskNameReference) {
-            this.proceedTo = Objects.requireNonNull(taskNameReference, "taskNameReference must not be null");
+            this.proceedTo = requireNonNull(taskNameReference, "taskNameReference must not be null");
             return self();
         }
 
@@ -192,17 +195,17 @@ public class ModelBuilderFactory {
         }
 
         public SendTaskBuilder withObjectNameReference(String objectNameReference) {
-            this.objectNameReference = Objects.requireNonNull(objectNameReference, "objectNameReference must not be null");
+            this.objectNameReference = requireNonNull(objectNameReference, "objectNameReference must not be null");
             return self();
         }
 
         public SendTaskBuilder withReceiverSubjectName(String receiverSubjectName) {
-            this.receiverSubjectName = Objects.requireNonNull(receiverSubjectName, "receiverSubjectName must not be null");
+            this.receiverSubjectName = requireNonNull(receiverSubjectName, "receiverSubjectName must not be null");
             return self();
         }
 
         public SendTaskBuilder withProceedTo(String taskName) {
-            this.proceedTo = Objects.requireNonNull(taskName, "taskName must not be null");
+            this.proceedTo = requireNonNull(taskName, "taskName must not be null");
             return self();
         }
 
@@ -231,12 +234,7 @@ public class ModelBuilderFactory {
 
                 @Override
                 public String toString() {
-                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-                            append("name", name).
-                            append("objectNameReference", objectNameReference).
-                            append("receiverSubjectName", receiverSubjectName).
-                            append("proceedTo", proceedTo).
-                            toString();
+                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("name", name).append("objectNameReference", objectNameReference).append("receiverSubjectName", receiverSubjectName).append("proceedTo", proceedTo).toString();
                 }
             };
         }
@@ -266,10 +264,7 @@ public class ModelBuilderFactory {
 
                 @Override
                 public String toString() {
-                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-                            append("objectNameReference", objectNameReference).
-                            append("taskNameReference", taskNameReference).
-                            toString();
+                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("objectNameReference", objectNameReference).append("taskNameReference", taskNameReference).toString();
                 }
 
             });
@@ -286,15 +281,12 @@ public class ModelBuilderFactory {
 
                 @Override
                 public Collection<Message> getMessages() {
-                    return Collections.unmodifiableCollection(messages);
+                    return unmodifiableCollection(messages);
                 }
 
                 @Override
                 public String toString() {
-                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-                            append("name", name).
-                            append("messages", messages).
-                            toString();
+                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("name", name).append("messages", messages).toString();
                 }
 
             };
@@ -327,7 +319,7 @@ public class ModelBuilderFactory {
 
                 @Override
                 public Collection<Attribute> getAttributes() {
-                    return attributes;
+                    return unmodifiableCollection(attributes);
                 }
             };
         }
@@ -345,7 +337,7 @@ public class ModelBuilderFactory {
         }
 
         public AttributeBuilder withType(AttributeType attributeType) {
-            this.attributeType = Objects.requireNonNull(attributeType, "attributeType must not be null");
+            this.attributeType = requireNonNull(attributeType, "attributeType must not be null");
             return self();
         }
 

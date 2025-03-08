@@ -118,7 +118,7 @@
                 <!-- see https://devlauer.github.io/plantuml-generator/plantuml-generator-maven-plugin/latest/class-diagram.html -->
                 <executions>
                     <execution>
-                        <id>generate-simple-diagram</id>
+                        <id>generate-class-diagram</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
