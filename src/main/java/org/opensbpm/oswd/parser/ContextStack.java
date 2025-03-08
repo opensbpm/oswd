@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.opensbpm.oswd.StackItem;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opensbpm.oswd.ModelBuilderFactory.ModelBuilder;
 

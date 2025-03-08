@@ -1,7 +1,6 @@
 package org.opensbpm.oswd.parser;
 
 import org.opensbpm.oswd.ModelBuilderFactory;
-import org.opensbpm.oswd.StackItem;
 import org.opensbpm.oswd.parser.OswdParser.AttributeContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectContext;

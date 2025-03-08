@@ -19,7 +19,6 @@ import org.opensbpm.oswd.parser.OswdParser.RoleNameContext;
 import org.opensbpm.oswd.parser.OswdParser.VersionContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectNameContext;
-import org.opensbpm.oswd.parser.OswdParser.ObjectNameReferenceContext;
 import org.opensbpm.oswd.parser.OswdParser.TaskContext;
 import org.opensbpm.oswd.parser.OswdParser.ShowContext;
 import org.opensbpm.oswd.parser.OswdParser.SendContext;
@@ -42,7 +41,7 @@ public class ProcessParser {
     public static org.opensbpm.oswd.Process parseProcess(String content) {
         OswdParser parser = createOswdParser(content);
         DefinitionContext definitionContext = parser.definition();
-        MyOswdBaseListener listener = new MyOswdBaseListener();
+        ProcessListener listener = new ProcessListener();
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(listener, definitionContext);
         return listener.getProcess();
@@ -55,11 +54,11 @@ public class ProcessParser {
         return new OswdParser(tokens);
     }
 
-    private static class MyOswdBaseListener extends OswdBaseListener {
+    private static class ProcessListener extends OswdBaseListener {
         private final ContextStack contextStack;
         private org.opensbpm.oswd.Process process;
 
-        public MyOswdBaseListener() {
+        public ProcessListener() {
             contextStack = new ContextStack();
         }
 
