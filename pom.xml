@@ -111,6 +111,29 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>de.elnarion.maven</groupId>
+                <artifactId>plantuml-generator-maven-plugin</artifactId>
+                <version>1.1.2</version>
+                <!-- see https://devlauer.github.io/plantuml-generator/plantuml-generator-maven-plugin/latest/class-diagram.html -->
+                <executions>
+                    <execution>
+                        <id>generate-simple-diagram</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <outputFilename>model.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>org.opensbpm.oswd</scanPackage>
+                            </scanPackages>
+                            <blacklistRegexp>org\.opensbpm\.oswd\.parser\..*</blacklistRegexp>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>
