@@ -38,20 +38,16 @@ import static org.opensbpm.oswd.parser.ContextStackFactory.attributeItem;
 
 public class ProcessParser {
 
-    public static org.opensbpm.oswd.Process parseProcess(String content) {
-        OswdParser parser = createOswdParser(content);
+    public static Process parseProcess(String content) {
+        OswdLexer oswdLexer = new OswdLexer(CharStreams.fromString(content));
+        CommonTokenStream tokens = new CommonTokenStream(oswdLexer);
+        OswdParser parser = new OswdParser(tokens);
         DefinitionContext definitionContext = parser.definition();
+
         ProcessListener listener = new ProcessListener();
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(listener, definitionContext);
         return listener.getProcess();
-    }
-
-    private static OswdParser createOswdParser(String content) {
-        OswdLexer oswdLexer = new OswdLexer(CharStreams.fromString(content));
-
-        CommonTokenStream tokens = new CommonTokenStream(oswdLexer);
-        return new OswdParser(tokens);
     }
 
     private static class ProcessListener extends OswdBaseListener {
