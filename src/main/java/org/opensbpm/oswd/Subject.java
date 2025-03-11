@@ -8,6 +8,15 @@ public interface Subject extends HasName {
 
     Collection<Task> getTasks();
 
-    public interface Role extends HasName{
+    default void accept(OswdVisitor visitor) {
+        visitor.visitSubject(this);
+        getRole().accept(visitor);
+        getTasks().forEach(task -> task.accept(visitor));
+    }
+
+    public interface Role extends HasName {
+        default void accept(OswdVisitor visitor) {
+            visitor.visitRole(this);
+        }
     }
 }

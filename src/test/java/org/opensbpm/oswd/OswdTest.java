@@ -2,7 +2,8 @@ package org.opensbpm.oswd;
 
 import org.junit.jupiter.api.Test;
 import org.opensbpm.oswd.jxpath.JXPath;
-import org.opensbpm.oswd.parser.ProcessParser;
+
+import java.io.StringReader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -13,10 +14,7 @@ import static org.opensbpm.oswd.matchers.OswdMatchers.*;
 public class OswdTest {
 
     @Test
-    public void testAll() throws Exception {
-//        InputStream resource = OswdTest.class.getResourceAsStream("/sample.oswd");
-//        OswdLexer oswdLexer = new OswdLexer(CharStreams.fromStream(resource));
-
+    public void testParse() throws Exception {
         //arrange
         String content = "" +
                 "process AProcess\n" +
@@ -35,7 +33,7 @@ public class OswdTest {
         System.out.println(content);
 
         //act
-        Process process = ProcessParser.parseProcess(content);
+        Process process = Oswd.parseOswd(new StringReader(content));
 
         //assert
         JXPath<Process> jxPath = new JXPath<>(process);
@@ -86,6 +84,33 @@ public class OswdTest {
                         isMessage("Object2", "BTask")
                 )
         ));
+
+    }
+
+    @Test
+    public void testToOswd() throws Exception {
+        //arrange
+        String content = "" +
+                "process AProcess\n" +
+                " version 11\n" +
+                " description ADescription\n" +
+                " ASubject with role ARole\n" +
+                "  ATask show AObject\n" +
+                "   with AField as text required readonly\n" +
+                "   with BField as number\n" +
+                "   proceed to BTask\n" +
+                "  BTask send AObject to ASubject\n" +
+                "   proceed to CTask\n" +
+                "  CTask receive Object1 proceed to ATask\n" +
+                " Object2 proceed to BTask\n" +
+                "";
+        Process process = Oswd.parseOswd(new StringReader(content));
+
+        //act
+        String oswdContent = Oswd.toOswd(process);
+
+        //assert
+        assertThat(oswdContent, is(content));
 
     }
 

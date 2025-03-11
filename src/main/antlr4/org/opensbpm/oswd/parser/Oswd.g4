@@ -1,10 +1,12 @@
 grammar Oswd;
 
 definition  : process EOF;
-process     : 'process' processName version description? subject+;
+process     : 'process' processName version descriptionDef? subject+;
 processName : SPACE IDENTIFIER CRLF;
 version     : SPACE* 'version' SPACE INT CRLF;
-description : SPACE* 'description' SPACE IDENTIFIER CRLF;
+descriptionDef : SPACE* 'description' SPACE description CRLF;
+description : IDENTIFIER;
+
 
 subject     : SPACE* subjectName 'with role' roleName task+;
 subjectName : SPACE IDENTIFIER SPACE;

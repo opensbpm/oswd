@@ -7,4 +7,10 @@ public interface SendTask extends Task {
     String getReceiverSubjectName();
 
     String getProceedTo();
+
+    default void accept(OswdVisitor visitor) {
+        visitor.visitSendTask(this);
+
+        visitor.visitProceedTo(getProceedTo());
+    }
 }

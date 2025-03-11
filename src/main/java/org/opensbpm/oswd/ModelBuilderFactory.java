@@ -58,10 +58,16 @@ public class ModelBuilderFactory {
 
     public static class ProcessBuilder extends AbstractBuilder<Process, ProcessBuilder> {
         private int version;
+        private String description;
         private Collection<Subject> subjects = new ArrayList<>();
 
         public ProcessBuilder withVersion(int version) {
             this.version = version;
+            return self();
+        }
+
+        public ProcessBuilder withDescription(String description) {
+            this.description = description;
             return self();
         }
 
@@ -88,9 +94,15 @@ public class ModelBuilderFactory {
                 }
 
                 @Override
+                public String getDescription() {
+                    return description;
+                }
+
+                @Override
                 public Collection<Subject> getSubjects() {
                     return unmodifiableCollection(subjects);
                 }
+
             };
         }
     }
@@ -134,6 +146,7 @@ public class ModelBuilderFactory {
                 public Collection<Task> getTasks() {
                     return unmodifiableCollection(tasks);
                 }
+
             };
         }
 
@@ -180,6 +193,9 @@ public class ModelBuilderFactory {
                 public String getProceedTo() {
                     return proceedTo;
                 }
+
+
+
             };
         }
     }
@@ -234,7 +250,12 @@ public class ModelBuilderFactory {
 
                 @Override
                 public String toString() {
-                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("name", name).append("objectNameReference", objectNameReference).append("receiverSubjectName", receiverSubjectName).append("proceedTo", proceedTo).toString();
+                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                            .append("name", name)
+                            .append("objectNameReference", objectNameReference)
+                            .append("receiverSubjectName", receiverSubjectName)
+                            .append("proceedTo", proceedTo)
+                            .toString();
                 }
             };
         }

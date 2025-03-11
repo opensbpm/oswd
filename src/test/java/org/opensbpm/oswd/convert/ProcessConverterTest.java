@@ -4,19 +4,16 @@ import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Test;
 import org.opensbpm.engine.api.model.definition.ProcessDefinition;
 import org.opensbpm.engine.xmlmodel.ProcessModel;
-import org.opensbpm.engine.xmlmodel.processmodel.ProcessType;
-import org.opensbpm.oswd.ModelBuilderFactory;
 import org.opensbpm.oswd.Process;
-import org.opensbpm.engine.xmlmodel.ProcessModel;
-import org.opensbpm.oswd.parser.OswdParser;
 import org.opensbpm.oswd.parser.ProcessParser;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 
 class ProcessConverterTest {
 
     @Test
-    public void testToXml() throws JAXBException {
+    public void testToXml() throws Exception {
         //arrange
         String content = "" +
                 "process AProcess\n" +
@@ -32,7 +29,7 @@ class ProcessConverterTest {
                 "  CTask receive AObject proceed to ATask\n" +
                 "   AObject proceed to BTask\n" +
                 "";
-        Process process = ProcessParser.parseProcess(content);
+        Process process = ProcessParser.parseOswd(new StringReader(content));
 
         //act
         ProcessDefinition processDefinition = new ProcessConverter().convert(process);

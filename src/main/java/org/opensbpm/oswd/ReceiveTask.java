@@ -6,9 +6,21 @@ public interface ReceiveTask extends Task {
 
     Collection<Message> getMessages();
 
-    interface Message{
+    default void accept(OswdVisitor visitor) {
+        visitor.visitReceiveTask(this);
+
+        getMessages().forEach(message -> message.accept(visitor));
+    }
+
+    interface Message {
 
         String getObjectNameReference();
+
         String getTaskNameReference();
+
+        default void accept(OswdVisitor visitor) {
+            visitor.visitMessage(this);
+        }
+
     }
 }
