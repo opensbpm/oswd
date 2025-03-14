@@ -1,6 +1,5 @@
 package org.opensbpm.oswd.convert;
 
-import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Test;
 import org.opensbpm.engine.api.model.definition.ProcessDefinition;
 import org.opensbpm.engine.xmlmodel.ProcessModel;
