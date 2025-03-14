@@ -1,24 +1,18 @@
 package org.opensbpm.oswd.convert;
 
-import org.opensbpm.engine.api.model.builder.ObjectBuilder;
+import org.opensbpm.engine.api.model.builder.*;
 import org.opensbpm.engine.api.model.builder.ProcessBuilder;
 import org.opensbpm.engine.api.model.definition.ProcessDefinition;
 import org.opensbpm.oswd.*;
+import org.opensbpm.oswd.Subject.Role;
 import org.opensbpm.oswd.ReceiveTask.Message;
 
 import org.opensbpm.engine.api.model.FieldType;
 
-import org.opensbpm.engine.api.model.builder.SubjectBuilder;
-
-import org.opensbpm.engine.api.model.builder.FunctionStateBuilder;
 import org.opensbpm.engine.api.model.builder.FunctionStateBuilder.AbstractAttributePermissionBuilder;
 import org.opensbpm.engine.api.model.builder.FunctionStateBuilder.PermissionBuilder;
-import org.opensbpm.engine.api.model.builder.HasChildAttributes;
 import org.opensbpm.engine.api.model.builder.ObjectBuilder.AttributeBuilder;
 import org.opensbpm.engine.api.model.builder.ObjectBuilder.FieldBuilder;
-import org.opensbpm.engine.api.model.builder.ReceiveStateBuilder;
-import org.opensbpm.engine.api.model.builder.SendStateBuilder;
-import org.opensbpm.engine.api.model.builder.StateBuilder;
 import org.opensbpm.engine.api.model.definition.PermissionDefinition.Permission;
 
 import java.util.*;
@@ -58,14 +52,105 @@ public class ProcessConverter {
 //            }
 //        }
 
-        for (Subject subject : processType.getSubjects()) {
-            processBuilder.addSubject(createSubject(subject));
-        }
+        processType.accept(new OswdVisitor() {
+            private UserSubjectBuilder subjectBuilder;
+            private FunctionStateBuilder functionState;
+            @Override
+            public void visitProcess(Process process) {
+
+            }
+
+            @Override
+            public void visitSubject(Subject subject) {
+                subjectBuilder = userSubject(subject.getName(), subject.getRole().getName());
+                processBuilder.addSubject(subjectBuilder);
+            }
+
+            @Override
+            public void visitRole(Role role) {
+                //noop
+            }
+
+            @Override
+            public void visitShowTask(ShowTask showTask) {
+                functionState = functionState(showTask.getName());
+
+//            Optional.ofNullable(showTask.getProvider())
+//                    .ifPresent(provider -> functionState.withProvider(provider));
+//            if (showTask.getParameters() != null) {
+//                for (Element element : showTask.getParameters().getAny()) {
+//                    functionState.addParameter(element.getLocalName(), element.getFirstChild().getNodeValue());
+//                }
+//            }
+
+                subjectBuilder.addState(functionState);
+            }
+
+            @Override
+            public void visitBusinessObject(BusinessObject businessObject) {
+                ObjectBuilder objectBuilder = objectCache.computeIfAbsent(businessObject.getName(), new Function<String, ObjectBuilder>() {
+                    @Override
+                    public ObjectBuilder apply(String s) {
+                        ObjectBuilder objectBuilder = object(businessObject.getName());
+                        //objectBuilder.withDisplayName(businessObject.getDisplayName());
+                        processBuilder.addObject(objectBuilder);
+                        return objectBuilder;
+                    }
+                });
+
+                for (Attribute attribute : businessObject.getAttributes()) {
+                    FieldBuilder fieldBuilder = field(attribute.getName(), asFieldType(attribute.getAttributeType()));
+//                Optional.ofNullable(field.isIndexed())
+//                        .ifPresent(indexed -> fieldBuilder.withIndexed(indexed));
+//                Optional.ofNullable(field.getAutocomplete())
+//                        .ifPresent(autocomplete
+//                                -> fieldBuilder.withAutocompleteObject(processBuilder.getObject(autocomplete)));
+                    objectBuilder.addAttribute(fieldBuilder);
+                }
+
+
+                PermissionBuilder permissionBuilder = permission(objectBuilder)
+                        .addPermissions(createAttribute(objectBuilder, businessObject.getAttributes()));
+                functionState.addPermission(permissionBuilder);
+            }
+
+            @Override
+            public void visitAttribute(Attribute attribute) {
+
+            }
+
+            @Override
+            public void visitSendTask(SendTask sendTask) {
+                SendStateBuilder sendState = sendState(sendTask.getName(),
+                        processBuilder.getSubject(sendTask.getReceiverSubjectName()),
+                        processBuilder.getObject(sendTask.getObjectNameReference())
+                );
+//            if (((SendTask) stateType).isAsync() != null && ((SendTask) stateType).isAsync()) {
+//                sendState.asAsync();
+//            }
+                subjectBuilder.addState(sendState);
+            }
+
+            @Override
+            public void visitReceiveTask(ReceiveTask receiveTask) {
+                ReceiveStateBuilder receiveStateBuilder = receiveState(receiveTask.getName());
+                subjectBuilder.addState(receiveStateBuilder);
+            }
+
+            @Override
+            public void visitMessage(Message message) {
+
+            }
+
+            @Override
+            public void visitProceedTo(String proceedTo) {
+
+            }
+        });
 
         for (Subject subject : processType.getSubjects()) {
             updateSubject(processBuilder, subject);
         }
-
 
         return processBuilder.build();
     }
@@ -73,10 +158,6 @@ public class ProcessConverter {
     private void updateSubject(ProcessBuilder processBuilder, Subject subject) {
         SubjectBuilder<?, ? extends SubjectDefinition> subjectBuilder;
         subjectBuilder = processBuilder.getSubject(subject.getName());
-
-        for (Task task : subject.getTasks()) {
-            subjectBuilder.addState(createState(task, processBuilder));
-        }
 
         updateHeads(subject, subjectBuilder, processBuilder);
     }
@@ -115,85 +196,6 @@ public class ProcessConverter {
 //        }
 //        return attributeBuilders;
 //    }
-
-    private SubjectBuilder<?, ?> createSubject(Subject subject) {
-        SubjectBuilder<?, ?> subjectBuilder;
-        if (subject instanceof /*User*/ Subject) {
-            subjectBuilder = userSubject(subject.getName(), subject.getRole().getName());
-//        } else if (subject instanceof ServiceSubject) {
-//            subjectBuilder = serviceSubject(subject.getName());
-        } else {
-            throw new UnsupportedOperationException("SubjectType " + subject + " not supported yet");
-        }
-//        if (subject.isStarter() != null && subject.isStarter()) {
-//            subjectBuilder.asStarter();
-//        }
-        return subjectBuilder;
-    }
-
-    private StateBuilder<?, ?> createState(Task stateType, ProcessBuilder processBuilder) {
-        StateBuilder<?, ?> stateBuilder;
-        if (stateType instanceof ShowTask) {
-            ShowTask functionStateType = (ShowTask) stateType;
-            FunctionStateBuilder functionState = functionState(stateType.getName());
-
-//            Optional.ofNullable(functionStateType.getProvider())
-//                    .ifPresent(provider -> functionState.withProvider(provider));
-//            if (functionStateType.getParameters() != null) {
-//                for (Element element : functionStateType.getParameters().getAny()) {
-//                    functionState.addParameter(element.getLocalName(), element.getFirstChild().getNodeValue());
-//                }
-//            }
-
-            BusinessObject businessObject = functionStateType.getBusinessObject();
-            ObjectBuilder objectBuilder = objectCache.computeIfAbsent(businessObject.getName(), new Function<String, ObjectBuilder>() {
-                @Override
-                public ObjectBuilder apply(String s) {
-                    ObjectBuilder objectBuilder = object(businessObject.getName());
-                    //objectBuilder.withDisplayName(businessObject.getDisplayName());
-                    processBuilder.addObject(objectBuilder);
-                    return objectBuilder;
-                }
-            });
-
-            for (Attribute attribute : businessObject.getAttributes()) {
-                FieldBuilder fieldBuilder = field(attribute.getName(), asFieldType(attribute.getAttributeType()));
-//                Optional.ofNullable(field.isIndexed())
-//                        .ifPresent(indexed -> fieldBuilder.withIndexed(indexed));
-//                Optional.ofNullable(field.getAutocomplete())
-//                        .ifPresent(autocomplete
-//                                -> fieldBuilder.withAutocompleteObject(processBuilder.getObject(autocomplete)));
-                objectBuilder.addAttribute(fieldBuilder);
-            }
-
-
-            PermissionBuilder permissionBuilder = permission(objectBuilder)
-                    .addPermissions(createAttribute(objectBuilder, businessObject.getAttributes()));
-            functionState.addPermission(permissionBuilder);
-
-            stateBuilder = functionState;
-        } else if (stateType instanceof ReceiveTask) {
-            stateBuilder = receiveState(stateType.getName());
-        } else if (stateType instanceof SendTask) {
-            SendTask sendTask = (SendTask) stateType;
-            SendStateBuilder sendState = sendState(stateType.getName(),
-                    processBuilder.getSubject(sendTask.getReceiverSubjectName()),
-                    processBuilder.getObject(sendTask.getObjectNameReference())
-            );
-//            if (((SendTask) stateType).isAsync() != null && ((SendTask) stateType).isAsync()) {
-//                sendState.asAsync();
-//            }
-            stateBuilder = sendState;
-        } else {
-            throw new UnsupportedOperationException("StateType " + stateType + " not supported yet");
-        }
-//        if (StateEventType.START == stateType.getEventType()) {
-//            stateBuilder.asStart();
-//        } else if (StateEventType.END == stateType.getEventType()) {
-//            stateBuilder.asEnd();
-//        }
-        return stateBuilder;
-    }
 
     private static FieldType asFieldType(AttributeType attributeType) {
         switch (attributeType) {
