@@ -9,7 +9,7 @@ import org.opensbpm.oswd.parser.ProcessParser;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-class ProcessConverterTest {
+public class ProcessConverterTest {
 
     @Test
     public void testToXml() throws Exception {
