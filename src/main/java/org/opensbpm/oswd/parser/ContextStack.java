@@ -13,7 +13,7 @@ public class ContextStack {
             Stack<? extends ModelBuilder>
             > classStackMap = new HashMap<>();
 
-    public <B extends ModelBuilder> B register(StackItem<B, ? extends ParserRuleContext> stackItem) {
+    public <B extends ModelBuilder> B push(StackItem<B, ? extends ParserRuleContext> stackItem) {
         Stack<B> stack = new Stack<>();
         classStackMap.putIfAbsent(stackItem.getContext(), stack);
         return stack.push(stackItem.createBuilder());

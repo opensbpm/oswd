@@ -20,7 +20,7 @@ class ProcessOswdListener extends OswdBaseListener {
 
     @Override
     public void enterProcess(ProcessContext ctx) {
-        contextStack.register(processItem(ctx));
+        contextStack.push(processItem(ctx));
     }
 
     @Override
@@ -49,7 +49,7 @@ class ProcessOswdListener extends OswdBaseListener {
 
     @Override
     public void enterSubject(SubjectContext ctx) {
-        contextStack.register(subjectItem(ctx));
+        contextStack.push(subjectItem(ctx));
     }
 
     @Override
@@ -75,13 +75,13 @@ class ProcessOswdListener extends OswdBaseListener {
     @Override
     public void enterTask(TaskContext ctx) {
         ofNullable(ctx.show())
-                .ifPresent(show -> contextStack.register(showItem(show)));
+                .ifPresent(show -> contextStack.push(showItem(show)));
 
         ofNullable(ctx.receive())
-                .ifPresent(receive -> contextStack.register(receiveItem(receive)));
+                .ifPresent(receive -> contextStack.push(receiveItem(receive)));
 
         ofNullable(ctx.send())
-                .ifPresent(send -> contextStack.register(sendItem(send)));
+                .ifPresent(send -> contextStack.push(sendItem(send)));
     }
 
     @Override
@@ -113,7 +113,7 @@ class ProcessOswdListener extends OswdBaseListener {
 
     @Override
     public void enterObject(ObjectContext ctx) {
-        contextStack.register(objectItem(ctx));
+        contextStack.push(objectItem(ctx));
     }
 
     @Override
@@ -124,7 +124,7 @@ class ProcessOswdListener extends OswdBaseListener {
 
     @Override
     public void enterAttribute(AttributeContext ctx) {
-        ModelBuilderFactory.AttributeBuilder attributeBuilder = contextStack.register(attributeItem(ctx))
+        ModelBuilderFactory.AttributeBuilder attributeBuilder = contextStack.push(attributeItem(ctx))
                 .withName(ctx.attributeName().IDENTIFIER().getText());
 
         Optional.ofNullable(ctx.required())
