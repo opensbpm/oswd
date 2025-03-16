@@ -8,7 +8,6 @@ import org.opensbpm.oswd.parser.OswdParser.DefinitionContext;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 
 public class ProcessParser {
 

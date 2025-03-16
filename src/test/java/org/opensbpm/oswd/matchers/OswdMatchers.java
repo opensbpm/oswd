@@ -25,7 +25,7 @@ public class OswdMatchers {
 
         StringDescription description = new StringDescription();
         allOf(matchers).describeTo(description);
-        return new CustomTypeSafeMatcher<>("subjects " + description.toString()) {
+        return new CustomTypeSafeMatcher<>("subjects " + description) {
             @Override
             protected boolean matchesSafely(Subject subject) {
                 return allOf(matchers).matches(subject);
@@ -66,7 +66,7 @@ public class OswdMatchers {
 
         StringDescription description = new StringDescription();
         allOf(matchers).describeTo(description);
-        return new CustomTypeSafeMatcher<>("tasks " + description.toString()) {
+        return new CustomTypeSafeMatcher<>("tasks " + description) {
             @Override
             protected boolean matchesSafely(Subject subject) {
                 return contains(matchers).matches(subject.getTasks());
@@ -80,7 +80,7 @@ public class OswdMatchers {
 
         StringDescription description = new StringDescription();
         allOf(matchers).describeTo(description);
-        return new CustomTypeSafeMatcher<>("Tasks " + description.toString()) {
+        return new CustomTypeSafeMatcher<>("Tasks " + description) {
             @Override
             protected boolean matchesSafely(Task task) {
                 return allOf(matchers).matches(task);
@@ -148,7 +148,7 @@ public class OswdMatchers {
 
         StringDescription description = new StringDescription();
         allOf(matchers).describeTo(description);
-        return new CustomTypeSafeMatcher<>("tasks " + description.toString()) {
+        return new CustomTypeSafeMatcher<>("tasks " + description) {
             @Override
             protected boolean matchesSafely(ReceiveTask receiveTask) {
                 return contains(matchers).matches(receiveTask.getMessages());

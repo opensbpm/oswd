@@ -26,7 +26,7 @@ import static org.opensbpm.engine.api.model.builder.DefinitionFactory.*;
 
 public class ProcessConverter {
 
-    private Map<String, ObjectBuilder> objectCache = new HashMap<>();
+    private final Map<String, ObjectBuilder> objectCache = new HashMap<>();
 
     public ProcessDefinition convert(Process processType) {
         ProcessBuilder processBuilder = process(processType.getName())
@@ -88,14 +88,11 @@ public class ProcessConverter {
 
             @Override
             public void visitBusinessObject(BusinessObject businessObject) {
-                ObjectBuilder objectBuilder = objectCache.computeIfAbsent(businessObject.getName(), new Function<String, ObjectBuilder>() {
-                    @Override
-                    public ObjectBuilder apply(String s) {
-                        ObjectBuilder objectBuilder = object(businessObject.getName());
-                        //objectBuilder.withDisplayName(businessObject.getDisplayName());
-                        processBuilder.addObject(objectBuilder);
-                        return objectBuilder;
-                    }
+                ObjectBuilder objectBuilder = objectCache.computeIfAbsent(businessObject.getName(), s -> {
+                    ObjectBuilder builder = object(businessObject.getName());
+                    //objectBuilder.withDisplayName(businessObject.getDisplayName());
+                    processBuilder.addObject(builder);
+                    return builder;
                 });
 
                 for (Attribute attribute : businessObject.getAttributes()) {
