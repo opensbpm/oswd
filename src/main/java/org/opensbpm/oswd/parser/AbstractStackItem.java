@@ -1,12 +1,12 @@
 package org.opensbpm.oswd.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.opensbpm.oswd.ModelBuilderFactory;
+import org.opensbpm.oswd.ModelBuilderFactory.ModelBuilder;
 
 import java.util.Objects;
 
 public abstract class AbstractStackItem<
-        B extends ModelBuilderFactory.ModelBuilder,
+        B extends ModelBuilder<?>,
         C extends ParserRuleContext>
         implements StackItem<B, C> {
 
