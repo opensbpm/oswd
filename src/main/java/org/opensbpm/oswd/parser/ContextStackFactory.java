@@ -1,6 +1,7 @@
 package org.opensbpm.oswd.parser;
 
-import org.opensbpm.oswd.ModelBuilderFactory;
+import org.opensbpm.oswd.*;
+import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.parser.OswdParser.AttributeContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
@@ -8,13 +9,13 @@ import org.opensbpm.oswd.parser.OswdParser.ShowContext;
 import org.opensbpm.oswd.parser.OswdParser.SendContext;
 import org.opensbpm.oswd.parser.OswdParser.ReceiveContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
-import org.opensbpm.oswd.ModelBuilderFactory.AttributeBuilder;
-import org.opensbpm.oswd.ModelBuilderFactory.ProcessBuilder;
-import org.opensbpm.oswd.ModelBuilderFactory.SubjectBuilder;
-import org.opensbpm.oswd.ModelBuilderFactory.ShowTaskBuilder;
-import org.opensbpm.oswd.ModelBuilderFactory.SendTaskBuilder;
-import org.opensbpm.oswd.ModelBuilderFactory.ReceiveTaskBuilder;
-import org.opensbpm.oswd.ModelBuilderFactory.BusinessObjectBuilder;
+import org.opensbpm.oswd.Attribute.AttributeBuilder;
+import org.opensbpm.oswd.Process.ProcessBuilder;
+import org.opensbpm.oswd.Subject.SubjectBuilder;
+import org.opensbpm.oswd.ShowTask.ShowTaskBuilder;
+import org.opensbpm.oswd.SendTask.SendTaskBuilder;
+import org.opensbpm.oswd.ReceiveTask.ReceiveTaskBuilder;
+import org.opensbpm.oswd.BusinessObject.BusinessObjectBuilder;
 
 public class ContextStackFactory {
 
@@ -23,9 +24,8 @@ public class ContextStackFactory {
 
             @Override
             public ProcessBuilder createBuilder() {
-                return ModelBuilderFactory.createProcessBuilder();
+                return Process.builder();
             }
-
         };
     }
 
@@ -34,7 +34,7 @@ public class ContextStackFactory {
 
             @Override
             public SubjectBuilder createBuilder() {
-                return ModelBuilderFactory.createSubjectBuilder();
+                return Subject.builder();
             }
 
         };
@@ -45,9 +45,8 @@ public class ContextStackFactory {
 
             @Override
             public ShowTaskBuilder createBuilder() {
-                return ModelBuilderFactory.createShowTaskBuilder();
+                return ShowTask.builder();
             }
-
         };
     }
 
@@ -56,7 +55,7 @@ public class ContextStackFactory {
 
             @Override
             public SendTaskBuilder createBuilder() {
-                return ModelBuilderFactory.createSendTaskBuilder();
+                return SendTask.builder();
             }
 
         };
@@ -67,7 +66,7 @@ public class ContextStackFactory {
 
             @Override
             public ReceiveTaskBuilder createBuilder() {
-                return ModelBuilderFactory.createReceiveTaskBuilder();
+                return ReceiveTask.builder();
             }
 
         };
@@ -78,7 +77,7 @@ public class ContextStackFactory {
 
             @Override
             public BusinessObjectBuilder createBuilder() {
-                return ModelBuilderFactory.createBusinessObjectBuilder();
+                return BusinessObject.builder();
             }
 
         };
@@ -89,7 +88,7 @@ public class ContextStackFactory {
 
             @Override
             public AttributeBuilder createBuilder() {
-                return ModelBuilderFactory.createAttributeBuilder();
+                return Attribute.builder();
             }
 
         };

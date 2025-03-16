@@ -2,6 +2,7 @@ package org.opensbpm.oswd.parser;
 
 import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
+import org.opensbpm.oswd.Attribute.AttributeBuilder;
 import org.opensbpm.oswd.parser.OswdParser.*;
 
 import java.util.Optional;
@@ -124,7 +125,7 @@ class ProcessOswdListener extends OswdBaseListener {
 
     @Override
     public void enterAttribute(AttributeContext ctx) {
-        ModelBuilderFactory.AttributeBuilder attributeBuilder = contextStack.push(attributeItem(ctx))
+        AttributeBuilder attributeBuilder = contextStack.push(attributeItem(ctx))
                 .withName(ctx.attributeName().IDENTIFIER().getText());
 
         Optional.ofNullable(ctx.required())

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.opensbpm.oswd.ModelBuilderFactory.ModelBuilder;
+import org.opensbpm.oswd.AbstractNamed.ModelBuilder;
 
 public class ContextStack {
     private final Map<ParserRuleContext, Stack<? extends ModelBuilder<?>>> classStackMap = new HashMap<>();
