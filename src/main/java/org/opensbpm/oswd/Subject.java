@@ -39,14 +39,14 @@ public final class Subject extends AbstractNamed {
         getTasks().forEach(task -> task.accept(visitor));
     }
 
+    private Subject copy() {
+        return new Subject(getName(), role, tasks);
+    }
+
     public interface Role extends HasName {
         default void accept(OswdVisitor visitor) {
             visitor.visitRole(this);
         }
-    }
-
-    private Subject copy() {
-        return new Subject(getName(), role, tasks);
     }
 
     public static class SubjectBuilder extends AbstractBuilder<Subject, SubjectBuilder> {
