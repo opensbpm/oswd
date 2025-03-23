@@ -25,7 +25,7 @@ public abstract class AbstractNamed implements HasName {
         T build();
     }
 
-    public static abstract class AbstractBuilder<T extends AbstractNamed, B extends AbstractBuilder<T, B>> implements ModelBuilder<T> {
+    public abstract static class AbstractBuilder<T extends AbstractNamed, B extends AbstractBuilder<T, B>> implements ModelBuilder<T> {
         protected final T product;
 
         protected AbstractBuilder(T product) {

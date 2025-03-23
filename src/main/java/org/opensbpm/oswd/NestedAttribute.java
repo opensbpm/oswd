@@ -20,7 +20,7 @@ public abstract class NestedAttribute extends AbstractAttribute {
         return businessObject;
     }
 
-    public static abstract class NestedAttributeBuilder<T extends NestedAttribute, B extends NestedAttributeBuilder<T, B>> extends AbstractAttributeBuilder<T, B> {
+    public abstract static class NestedAttributeBuilder<T extends NestedAttribute, B extends NestedAttributeBuilder<T, B>> extends AbstractAttributeBuilder<T, B> {
 
         protected NestedAttributeBuilder(T product) {
             super(product);
