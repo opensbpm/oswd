@@ -22,8 +22,8 @@ public final class SendTask extends AbstractNamed implements Task {
 
     public SendTask(String name, String objectNameReference, String receiverSubjectName, String proceedTo) {
         super(name);
-        this.objectNameReference = objectNameReference;
-        this.receiverSubjectName = receiverSubjectName;
+        this.objectNameReference = requireNonNull(objectNameReference, "ObjectNameReference must not be null");
+        this.receiverSubjectName = requireNonNull(receiverSubjectName, "ReceiverSubjectName must not be null");
         this.proceedTo = proceedTo;
     }
 

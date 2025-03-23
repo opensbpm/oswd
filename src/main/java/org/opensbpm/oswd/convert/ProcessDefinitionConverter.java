@@ -18,6 +18,7 @@ import org.opensbpm.oswd.Process.ProcessBuilder;
 import org.opensbpm.oswd.Subject.SubjectBuilder;
 import org.opensbpm.oswd.ShowTask.ShowTaskBuilder;
 import org.opensbpm.oswd.ReceiveTask.ReceiveTaskBuilder;
+import org.opensbpm.oswd.SendTask.SendTaskBuilder;
 import org.opensbpm.oswd.BusinessObject.BusinessObjectBuilder;
 import org.opensbpm.oswd.ScalarAttribute.ScalarAttributeBuilder;
 import org.opensbpm.oswd.NestedAttribute;
@@ -66,17 +67,24 @@ public class ProcessDefinitionConverter {
                 public Task visitReceiveState(ReceiveStateDefinition receiveStateDefinition) {
                     ReceiveTaskBuilder receiveTaskBuilder = ReceiveTask.builder()
                             .withName(receiveStateDefinition.getName());
-                    for(ReceiveTransitionDefinition transition :receiveStateDefinition.getTransitions()) {
-                            receiveTaskBuilder.addMessage(transition.getObjectDefinition().getName(), transition.getHead().getName());
+                    for (ReceiveTransitionDefinition transition : receiveStateDefinition.getTransitions()) {
+                        receiveTaskBuilder.addMessage(transition.getObjectDefinition().getName(), transition.getHead().getName());
                     }
+                    //receiveTaskBuilder.withProceedTo(sendStateDefinition.getHead().getName())
                     return receiveTaskBuilder
                             .build();
                 }
 
                 @Override
                 public Task visitSendState(SendStateDefinition sendStateDefinition) {
-                    return SendTask.builder()
+                    SendTaskBuilder sendTaskBuilder = SendTask.builder()
                             .withName(sendStateDefinition.getName())
+                            .withObjectNameReference(sendStateDefinition.getObjectModel().getName())
+                            .withReceiverSubjectName(sendStateDefinition.getReceiver().getName());
+                    if (sendStateDefinition.getHead() != null) {
+                        sendTaskBuilder.withProceedTo(sendStateDefinition.getHead().getName());
+                    }
+                    return sendTaskBuilder
                             .build();
                 }
             });
