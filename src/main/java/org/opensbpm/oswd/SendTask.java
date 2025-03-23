@@ -59,7 +59,7 @@ public final class SendTask extends AbstractNamed implements Task {
                 .toString();
     }
 
-    public static class SendTaskBuilder extends AbstractBuilder<SendTask, SendTaskBuilder> {
+    public static class SendTaskBuilder extends TaskBuilder<SendTask, SendTaskBuilder> {
         private SendTaskBuilder() {
             super(new SendTask());
         }

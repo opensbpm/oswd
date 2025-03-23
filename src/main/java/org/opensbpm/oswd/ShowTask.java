@@ -40,7 +40,7 @@ public final class ShowTask extends AbstractNamed implements Task {
         return new ShowTask(getName(), businessObject, proceedTo);
     }
 
-    public static class ShowTaskBuilder extends AbstractBuilder<ShowTask, ShowTaskBuilder> {
+    public static class ShowTaskBuilder extends TaskBuilder<ShowTask, ShowTaskBuilder> {
 
         private ShowTaskBuilder() {
             super(new ShowTask());

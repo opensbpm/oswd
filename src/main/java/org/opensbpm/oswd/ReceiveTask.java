@@ -50,7 +50,7 @@ public final class ReceiveTask extends AbstractNamed implements Task {
         }
     }
 
-    public static class ReceiveTaskBuilder extends AbstractBuilder<ReceiveTask, ReceiveTaskBuilder> {
+    public static class ReceiveTaskBuilder extends TaskBuilder<ReceiveTask, ReceiveTaskBuilder> {
 
         public ReceiveTaskBuilder() {
             super(new ReceiveTask());
