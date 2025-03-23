@@ -93,6 +93,13 @@
             <version>${opensbpm-engine.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.opensbpm.engine</groupId>
+            <artifactId>opensbpm-engine-examples</artifactId>
+            <version>${opensbpm-engine.version}</version>
+        </dependency>
+
+
         <!--
         ============================
          Test Runtime Dependencies
