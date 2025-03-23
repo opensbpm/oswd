@@ -80,4 +80,78 @@ public class ProcessDefinitionConverter {
         return subjectBuilder.build();
     }
 
+    private BusinessObject convertBusinessObject(List<PermissionDefinition> permissions) {
+        BusinessObjectBuilder objectBuilder = BusinessObject.builder()
+                .withName(permissions.iterator().next().getObjectDefinition().getName());
+
+        for (PermissionDefinition permission : permissions) {
+            for (AttributePermissionDefinition attributeDefinition : permission.getAttributePermissions()) {
+                Attribute attribute = convertAttribute(attributeDefinition.getAttribute());
+                objectBuilder.addAttribute(attribute);
+            }
+        }
+        return objectBuilder
+                .build();
+    }
+
+    private static Attribute convertAttribute(final AttributeDefinition attributeDefinition) {
+        return attributeDefinition.accept(new AttributeDefinitionVisitor<Attribute>() {
+            @Override
+            public Attribute visitField(FieldDefinition fieldDefinition) {
+                ScalarAttributeBuilder attributeBuilder = ScalarAttribute.builder()
+                        .withName(attributeDefinition.getName());
+                AttributeType type;
+                switch (fieldDefinition.getFieldType()) {
+                    case STRING:
+                        type = AttributeType.TEXT;
+                        break;
+                    case NUMBER:
+                        type = AttributeType.NUMBER;
+                        break;
+                    case DECIMAL:
+                        type = AttributeType.NUMBER;
+                        break;
+                    case DATE:
+                        type = AttributeType.DATE;
+                        break;
+                    case TIME:
+                        type = AttributeType.TIME;
+                        break;
+                    case BOOLEAN:
+                        type = AttributeType.BOOLEAN;
+                        break;
+                    case BINARY:
+                        type = AttributeType.BINARY;
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Unsupported field type: " + fieldDefinition.getFieldType());
+                }
+                attributeBuilder.withType(type);
+                return attributeBuilder.build();
+            }
+
+            @Override
+            public Attribute visitToOne(ToOneDefinition toOneDefinition) {
+                return convertNested(ToOneAttribute.builder(), toOneDefinition);
+            }
+
+            @Override
+            public Attribute visitToMany(ToManyDefinition toManyDefinition) {
+                return convertNested(ToManyAttribute.builder(), toManyDefinition);
+            }
+        });
+    }
+
+    private static <T extends NestedAttribute, B extends NestedAttributeBuilder<T, B>> T convertNested(NestedAttributeBuilder<T, B> attributeBuilder, ObjectDefinition.NestedAttribute nestedDefinition) {
+        attributeBuilder.withName(nestedDefinition.getName());
+
+        BusinessObjectBuilder objectBuilder = BusinessObject.builder().withName(nestedDefinition.getName());
+        for (AttributeDefinition attributeDefinition : nestedDefinition.getAttributes()) {
+            Attribute attribute = convertAttribute(attributeDefinition);
+            objectBuilder.addAttribute(attribute);
+        }
+        attributeBuilder.withBusinessObject(objectBuilder.build());
+        return attributeBuilder.build();
+    }
+
 }
