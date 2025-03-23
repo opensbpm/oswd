@@ -11,7 +11,7 @@ import org.opensbpm.oswd.parser.OswdParser.ShowContext;
 import org.opensbpm.oswd.parser.OswdParser.SendContext;
 import org.opensbpm.oswd.parser.OswdParser.ReceiveContext;
 import org.opensbpm.oswd.parser.OswdParser.ObjectContext;
-import org.opensbpm.oswd.Attribute.AttributeBuilder;
+import org.opensbpm.oswd.ScalarAttribute.ScalarAttributeBuilder;
 import org.opensbpm.oswd.Process.ProcessBuilder;
 import org.opensbpm.oswd.Subject.SubjectBuilder;
 import org.opensbpm.oswd.ShowTask.ShowTaskBuilder;
@@ -87,12 +87,12 @@ class ContextStackFactory {
         };
     }
 
-    public static StackItem<AttributeContext, AttributeBuilder> attributeItem(AttributeContext ctx) {
+    public static StackItem<AttributeContext, ScalarAttributeBuilder> attributeItem(AttributeContext ctx) {
         return new AbstractStackItem<>(ctx) {
 
             @Override
-            public AttributeBuilder getItem() {
-                return Attribute.builder();
+            public ScalarAttributeBuilder getItem() {
+                return ScalarAttribute.builder();
             }
 
         };

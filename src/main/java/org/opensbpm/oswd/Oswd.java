@@ -62,7 +62,7 @@ public class Oswd {
             public void visitAttribute(Attribute attribute) {
                 sb.append(String.format("   with %s as %s%s%s\n",
                         attribute.getName(),
-                        attribute.getAttributeType().getToken(),
+                        ((ScalarAttribute)attribute).getAttributeType().getToken(),
                         attribute.isRequired() ? " required" : "",
                         attribute.isReadonly() ? " readonly" : ""
                 ));

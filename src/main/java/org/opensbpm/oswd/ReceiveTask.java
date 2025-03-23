@@ -76,7 +76,10 @@ public final class ReceiveTask extends AbstractNamed implements Task {
 
                 @Override
                 public String toString() {
-                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("objectNameReference", objectNameReference).append("taskNameReference", taskNameReference).toString();
+                    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                            .append("objectNameReference", objectNameReference)
+                            .append("taskNameReference", taskNameReference)
+                            .toString();
                 }
 
             });

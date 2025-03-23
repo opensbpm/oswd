@@ -97,7 +97,7 @@ public class ProcessConverter {
                 });
 
                 for (Attribute attribute : businessObject.getAttributes()) {
-                    FieldBuilder fieldBuilder = field(attribute.getName(), asFieldType(attribute.getAttributeType()));
+                    FieldBuilder fieldBuilder = field(attribute.getName(), asFieldType(((ScalarAttribute)attribute).getAttributeType()));
 //                Optional.ofNullable(field.isIndexed())
 //                        .ifPresent(indexed -> fieldBuilder.withIndexed(indexed));
 //                Optional.ofNullable(field.getAutocomplete())

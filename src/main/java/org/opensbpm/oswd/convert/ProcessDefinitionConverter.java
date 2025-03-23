@@ -1,19 +1,27 @@
 package org.opensbpm.oswd.convert;
 
-import org.opensbpm.engine.api.model.definition.ProcessDefinition;
-import org.opensbpm.engine.api.model.definition.StateDefinition;
-import org.opensbpm.engine.api.model.definition.StateDefinitionVisitor;
+import org.opensbpm.engine.api.model.definition.*;
+import org.opensbpm.engine.api.model.definition.PermissionDefinition.AttributePermissionDefinition;
 import org.opensbpm.engine.api.model.definition.StateDefinition.FunctionStateDefinition;
 import org.opensbpm.engine.api.model.definition.StateDefinition.ReceiveStateDefinition;
 import org.opensbpm.engine.api.model.definition.StateDefinition.SendStateDefinition;
-import org.opensbpm.engine.api.model.definition.SubjectDefinition;
 import org.opensbpm.engine.api.model.definition.SubjectDefinition.UserSubjectDefinition;
+import org.opensbpm.engine.api.model.definition.ObjectDefinition.AttributeDefinition;
+import org.opensbpm.engine.api.model.definition.ObjectDefinition.AttributeDefinitionVisitor;
+import org.opensbpm.engine.api.model.definition.ObjectDefinition.FieldDefinition;
+import org.opensbpm.engine.api.model.definition.ObjectDefinition.ToOneDefinition;
+import org.opensbpm.engine.api.model.definition.ObjectDefinition.ToManyDefinition;
 import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.Process.ProcessBuilder;
-import org.opensbpm.oswd.ShowTask.ShowTaskBuilder;
 import org.opensbpm.oswd.Subject.SubjectBuilder;
-import org.opensbpm.oswd.Task.TaskBuilder;
+import org.opensbpm.oswd.ShowTask.ShowTaskBuilder;
+import org.opensbpm.oswd.BusinessObject.BusinessObjectBuilder;
+import org.opensbpm.oswd.ScalarAttribute.ScalarAttributeBuilder;
+import org.opensbpm.oswd.NestedAttribute;
+import org.opensbpm.oswd.NestedAttribute.NestedAttributeBuilder;
+
+import java.util.List;
 
 public class ProcessDefinitionConverter {
 
@@ -23,7 +31,7 @@ public class ProcessDefinitionConverter {
                 .withVersion(processType.getVersion())
                 .withDescription(processType.getDescription());
 
-        for(SubjectDefinition subject : processType.getSubjects()) {
+        for (SubjectDefinition subject : processType.getSubjects()) {
             processBuilder.addSubject(convertSubject(subject));
         }
         return processBuilder.build();
@@ -32,17 +40,24 @@ public class ProcessDefinitionConverter {
     private Subject convertSubject(SubjectDefinition subjectDefinition) {
         SubjectBuilder subjectBuilder = Subject.builder()
                 .withName(subjectDefinition.getName());
-        if(subjectDefinition instanceof UserSubjectDefinition){
+        if (subjectDefinition instanceof UserSubjectDefinition) {
             String roleName = ((UserSubjectDefinition) subjectDefinition).getRoles().iterator().next();
             subjectBuilder.withRoleName(roleName);
         }
-        for(StateDefinition stateDefinition : subjectDefinition.getStates()) {
+        for (StateDefinition stateDefinition : subjectDefinition.getStates()) {
             Task task = stateDefinition.accept(new StateDefinitionVisitor<Task>() {
 
                 @Override
                 public Task visitFunctionState(FunctionStateDefinition functionStateDefinition) {
-                    return ShowTask.builder()
-                            .withName(functionStateDefinition.getName())
+                    ShowTaskBuilder showTaskBuilder = ShowTask.builder()
+                            .withName(functionStateDefinition.getName());
+                    if (!functionStateDefinition.getPermissions().isEmpty()) {
+                        showTaskBuilder.withBusinessObject(convertBusinessObject(functionStateDefinition.getPermissions()));
+                    }
+                    if(!functionStateDefinition.getHeads().isEmpty()){
+                        showTaskBuilder.withProceedTo(functionStateDefinition.getHeads().iterator().next().getName());
+                    }
+                    return showTaskBuilder
                             .build();
                 }
 

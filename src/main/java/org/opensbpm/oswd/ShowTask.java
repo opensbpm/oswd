@@ -1,5 +1,7 @@
 package org.opensbpm.oswd;
 
+import org.springframework.lang.Nullable;
+
 import static java.util.Objects.requireNonNull;
 
 public final class ShowTask extends AbstractNamed implements Task {
@@ -15,17 +17,17 @@ public final class ShowTask extends AbstractNamed implements Task {
         //noop
     }
 
-    private ShowTask(String name, BusinessObject businessObject, String proceedTo) {
+    private ShowTask(String name, @Nullable BusinessObject businessObject, @Nullable String proceedTo) {
         super(name);
         this.businessObject = businessObject;
         this.proceedTo = proceedTo;
     }
 
-    public BusinessObject getBusinessObject() {
+    public @Nullable BusinessObject getBusinessObject() {
         return businessObject;
     }
 
-    public String getProceedTo() {
+    public @Nullable String getProceedTo() {
         return proceedTo;
     }
 

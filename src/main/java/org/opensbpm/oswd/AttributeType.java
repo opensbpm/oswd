@@ -8,7 +8,9 @@ public enum AttributeType {
     BOOLEAN("bool"),
     NUMBER("number"),
     DATE("date"),
-    TEXT("text");
+    TIME("time"),
+    TEXT("text"),
+    BINARY("binary");
 
     private final String token;
 
