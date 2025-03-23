@@ -22,6 +22,9 @@ public final class ReceiveTask extends AbstractNamed implements Task {
 
     public ReceiveTask(String name, Collection<Message> messages) {
         super(name);
+        if(messages.isEmpty()){
+            throw new IllegalArgumentException(messages + " are empty");
+        }
         this.messages = new ArrayList<>(messages);
     }
 

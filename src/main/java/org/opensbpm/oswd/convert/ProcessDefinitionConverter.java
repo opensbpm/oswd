@@ -5,6 +5,7 @@ import org.opensbpm.engine.api.model.definition.PermissionDefinition.AttributePe
 import org.opensbpm.engine.api.model.definition.StateDefinition.FunctionStateDefinition;
 import org.opensbpm.engine.api.model.definition.StateDefinition.ReceiveStateDefinition;
 import org.opensbpm.engine.api.model.definition.StateDefinition.SendStateDefinition;
+import org.opensbpm.engine.api.model.definition.StateDefinition.ReceiveStateDefinition.ReceiveTransitionDefinition;
 import org.opensbpm.engine.api.model.definition.SubjectDefinition.UserSubjectDefinition;
 import org.opensbpm.engine.api.model.definition.ObjectDefinition.AttributeDefinition;
 import org.opensbpm.engine.api.model.definition.ObjectDefinition.AttributeDefinitionVisitor;
@@ -16,6 +17,7 @@ import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.Process.ProcessBuilder;
 import org.opensbpm.oswd.Subject.SubjectBuilder;
 import org.opensbpm.oswd.ShowTask.ShowTaskBuilder;
+import org.opensbpm.oswd.ReceiveTask.ReceiveTaskBuilder;
 import org.opensbpm.oswd.BusinessObject.BusinessObjectBuilder;
 import org.opensbpm.oswd.ScalarAttribute.ScalarAttributeBuilder;
 import org.opensbpm.oswd.NestedAttribute;
@@ -62,8 +64,12 @@ public class ProcessDefinitionConverter {
 
                 @Override
                 public Task visitReceiveState(ReceiveStateDefinition receiveStateDefinition) {
-                    return ReceiveTask.builder()
-                            .withName(receiveStateDefinition.getName())
+                    ReceiveTaskBuilder receiveTaskBuilder = ReceiveTask.builder()
+                            .withName(receiveStateDefinition.getName());
+                    for(ReceiveTransitionDefinition transition :receiveStateDefinition.getTransitions()) {
+                            receiveTaskBuilder.addMessage(transition.getObjectDefinition().getName(), transition.getHead().getName());
+                    }
+                    return receiveTaskBuilder
                             .build();
                 }
 
