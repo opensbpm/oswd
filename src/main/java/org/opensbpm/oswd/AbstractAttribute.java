@@ -23,7 +23,7 @@ public abstract class AbstractAttribute extends AbstractNamed implements Attribu
     }
 
 
-    public static abstract class AbstractAttributeBuilder<T extends AbstractAttribute, B extends AbstractAttributeBuilder<T, B>> extends AbstractBuilder<T, B> {
+    public abstract static class AbstractAttributeBuilder<T extends AbstractAttribute, B extends AbstractAttributeBuilder<T, B>> extends AbstractBuilder<T, B> {
 
         protected AbstractAttributeBuilder(T product) {
             super(product);
