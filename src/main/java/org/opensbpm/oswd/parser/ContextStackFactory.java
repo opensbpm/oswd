@@ -1,7 +1,9 @@
 package org.opensbpm.oswd.parser;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
+import org.opensbpm.oswd.context.StackItem;
 import org.opensbpm.oswd.parser.OswdParser.AttributeContext;
 import org.opensbpm.oswd.parser.OswdParser.ProcessContext;
 import org.opensbpm.oswd.parser.OswdParser.SubjectContext;
@@ -17,77 +19,79 @@ import org.opensbpm.oswd.SendTask.SendTaskBuilder;
 import org.opensbpm.oswd.ReceiveTask.ReceiveTaskBuilder;
 import org.opensbpm.oswd.BusinessObject.BusinessObjectBuilder;
 
-public class ContextStackFactory {
+import java.util.Objects;
 
-    public static StackItem<ProcessBuilder, ProcessContext> processItem(ProcessContext ctx) {
+class ContextStackFactory {
+
+    public static StackItem<ProcessContext, ProcessBuilder> processItem(ProcessContext ctx) {
         return new AbstractStackItem<>(ctx) {
 
             @Override
-            public ProcessBuilder createBuilder() {
+            public ProcessBuilder getItem() {
                 return Process.builder();
             }
         };
     }
 
-    public static StackItem<SubjectBuilder, SubjectContext> subjectItem(SubjectContext ctx) {
+    public static StackItem<SubjectContext, SubjectBuilder> subjectItem(SubjectContext ctx) {
         return new AbstractStackItem<>(ctx) {
 
             @Override
-            public SubjectBuilder createBuilder() {
+            public SubjectBuilder getItem() {
                 return Subject.builder();
             }
 
         };
     }
 
-    public static StackItem<ShowTaskBuilder, ShowContext> showItem(ShowContext ctx) {
+    public static StackItem<ShowContext, ShowTaskBuilder> showItem(ShowContext ctx) {
         return new AbstractStackItem<>(ctx) {
 
             @Override
-            public ShowTaskBuilder createBuilder() {
+            public ShowTaskBuilder getItem() {
                 return ShowTask.builder();
             }
         };
     }
 
-    public static StackItem<SendTaskBuilder, SendContext> sendItem(SendContext ctx) {
+    public static StackItem<SendContext, SendTaskBuilder> sendItem(SendContext ctx) {
         return new AbstractStackItem<>(ctx) {
 
             @Override
-            public SendTaskBuilder createBuilder() {
+            public SendTaskBuilder getItem() {
                 return SendTask.builder();
             }
 
         };
     }
 
-    public static StackItem<ReceiveTaskBuilder, ReceiveContext> receiveItem(ReceiveContext ctx) {
+    public static StackItem<ReceiveContext, ReceiveTaskBuilder> receiveItem(ReceiveContext ctx) {
         return new AbstractStackItem<>(ctx) {
 
             @Override
-            public ReceiveTaskBuilder createBuilder() {
+            public ReceiveTaskBuilder getItem() {
                 return ReceiveTask.builder();
             }
 
         };
     }
 
-    public static StackItem<BusinessObjectBuilder, ObjectContext> objectItem(ObjectContext ctx) {
+    public static StackItem<ObjectContext, BusinessObjectBuilder> objectItem(ObjectContext ctx) {
         return new AbstractStackItem<>(ctx) {
 
             @Override
-            public BusinessObjectBuilder createBuilder() {
+            public BusinessObjectBuilder getItem() {
                 return BusinessObject.builder();
             }
 
         };
     }
 
-    public static StackItem<AttributeBuilder, AttributeContext> attributeItem(AttributeContext ctx) {
+    public static StackItem<AttributeContext, AttributeBuilder> attributeItem(AttributeContext ctx) {
         return new AbstractStackItem<>(ctx) {
 
             @Override
-            public AttributeBuilder createBuilder() {
+            public AttributeBuilder getItem() {
                 return Attribute.builder();
             }
 
@@ -96,5 +100,23 @@ public class ContextStackFactory {
 
     private ContextStackFactory() {
         //avoid instantiation
+    }
+
+    public abstract static class AbstractStackItem<
+            B extends AbstractNamed.ModelBuilder<?>,
+            C extends ParserRuleContext>
+            implements StackItem<C, B> {
+
+        private final C ctx;
+
+        protected AbstractStackItem(C ctx) {
+            this.ctx = Objects.requireNonNull(ctx, "ctx must not be null");
+        }
+
+        @Override
+        public final C getContext() {
+            return ctx;
+        }
+
     }
 }

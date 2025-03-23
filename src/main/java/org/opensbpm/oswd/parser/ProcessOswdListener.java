@@ -3,6 +3,7 @@ package org.opensbpm.oswd.parser;
 import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.Attribute.AttributeBuilder;
+import org.opensbpm.oswd.context.ContextStack;
 import org.opensbpm.oswd.parser.OswdParser.*;
 
 import java.util.Optional;

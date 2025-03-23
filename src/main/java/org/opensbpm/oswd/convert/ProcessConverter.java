@@ -55,6 +55,7 @@ public class ProcessConverter {
         processType.accept(new OswdVisitor() {
             private UserSubjectBuilder subjectBuilder;
             private FunctionStateBuilder functionState;
+
             @Override
             public void visitProcess(Process process) {
 
