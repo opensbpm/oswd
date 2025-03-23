@@ -54,11 +54,10 @@ public class ProcessDefinitionConverter {
                     if (!functionStateDefinition.getPermissions().isEmpty()) {
                         showTaskBuilder.withBusinessObject(convertBusinessObject(functionStateDefinition.getPermissions()));
                     }
-                    if(!functionStateDefinition.getHeads().isEmpty()){
+                    if (!functionStateDefinition.getHeads().isEmpty()) {
                         showTaskBuilder.withProceedTo(functionStateDefinition.getHeads().iterator().next().getName());
                     }
-                    return showTaskBuilder
-                            .build();
+                    return showTaskBuilder.build();
                 }
 
                 @Override
