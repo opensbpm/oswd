@@ -2,6 +2,8 @@ package org.opensbpm.oswd;
 
 import org.springframework.lang.Nullable;
 
+import java.util.Optional;
+
 import static java.util.Objects.requireNonNull;
 
 public final class ShowTask extends AbstractNamed implements Task {
@@ -33,9 +35,11 @@ public final class ShowTask extends AbstractNamed implements Task {
 
     public void accept(OswdVisitor visitor) {
         visitor.visitShowTask(this);
-        getBusinessObject().accept(visitor);
+        Optional.ofNullable(businessObject)
+                .ifPresent(b -> b.accept(visitor));
 
-        visitor.visitProceedTo(getProceedTo());
+        Optional.ofNullable(proceedTo)
+                        .ifPresent(visitor::visitProceedTo);
     }
 
     private ShowTask copy() {
