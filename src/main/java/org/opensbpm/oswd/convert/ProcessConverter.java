@@ -113,7 +113,17 @@ public class ProcessConverter {
             }
 
             @Override
-            public void visitAttribute(Attribute attribute) {
+            public void visitScalarAttribute(ScalarAttribute attribute) {
+
+            }
+
+            @Override
+            public void visitToOneAttribute(ToOneAttribute attribute) {
+
+            }
+
+            @Override
+            public void visitToManyAttribute(ToManyAttribute attribute) {
 
             }
 

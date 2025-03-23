@@ -22,9 +22,6 @@ public abstract class AbstractAttribute extends AbstractNamed implements Attribu
         return readonly;
     }
 
-    public void accept(OswdVisitor visitor) {
-        visitor.visitAttribute(this);
-    }
 
     public static abstract class AbstractAttributeBuilder<T extends AbstractAttribute, B extends AbstractAttributeBuilder<T, B>> extends AbstractBuilder<T, B> {
 

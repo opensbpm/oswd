@@ -6,7 +6,5 @@ public interface Attribute extends  HasName {
 
      boolean isReadonly();
 
-    default void accept(OswdVisitor visitor) {
-        visitor.visitAttribute(this);
-    }
+    void accept(OswdVisitor visitor);
 }

@@ -20,10 +20,6 @@ public abstract class NestedAttribute extends AbstractAttribute {
         return businessObject;
     }
 
-    public void accept(OswdVisitor visitor) {
-        visitor.visitAttribute(this);
-    }
-
     public static abstract class NestedAttributeBuilder<T extends NestedAttribute, B extends NestedAttributeBuilder<T, B>> extends AbstractAttributeBuilder<T, B> {
 
         protected NestedAttributeBuilder(T product) {

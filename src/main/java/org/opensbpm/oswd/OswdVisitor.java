@@ -15,7 +15,11 @@ public interface OswdVisitor {
 
     void visitBusinessObject(BusinessObject businessObject);
 
-    void visitAttribute(Attribute attribute);
+    void visitScalarAttribute(ScalarAttribute attribute);
+
+    void visitToOneAttribute(ToOneAttribute attribute);
+
+    void visitToManyAttribute(ToManyAttribute attribute);
 
     void visitSendTask(SendTask sendTask);
 

@@ -15,7 +15,7 @@ public class ToManyAttribute extends NestedAttribute {
     }
 
     public void accept(OswdVisitor visitor) {
-        visitor.visitAttribute(this);
+        visitor.visitToManyAttribute(this);
     }
 
     private ToManyAttribute copy() {

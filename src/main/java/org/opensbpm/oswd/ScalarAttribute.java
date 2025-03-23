@@ -23,7 +23,7 @@ public final class ScalarAttribute extends AbstractAttribute {
     }
 
     public void accept(OswdVisitor visitor) {
-        visitor.visitAttribute(this);
+        visitor.visitScalarAttribute(this);
     }
 
     private ScalarAttribute copy() {

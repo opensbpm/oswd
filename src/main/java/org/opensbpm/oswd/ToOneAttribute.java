@@ -18,7 +18,7 @@ public class ToOneAttribute extends NestedAttribute {
     }
 
     public void accept(OswdVisitor visitor) {
-        visitor.visitAttribute(this);
+        visitor.visitToOneAttribute(this);
     }
 
     private ToOneAttribute copy() {

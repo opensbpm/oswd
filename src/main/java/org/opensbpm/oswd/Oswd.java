@@ -59,13 +59,23 @@ public class Oswd {
             }
 
             @Override
-            public void visitAttribute(Attribute attribute) {
+            public void visitScalarAttribute(ScalarAttribute attribute) {
                 sb.append(String.format("   with %s as %s%s%s\n",
                         attribute.getName(),
-                        ((ScalarAttribute)attribute).getAttributeType().getToken(),
+                        attribute.getAttributeType().getToken(),
                         attribute.isRequired() ? " required" : "",
                         attribute.isReadonly() ? " readonly" : ""
                 ));
+            }
+
+            @Override
+            public void visitToOneAttribute(ToOneAttribute attribute) {
+
+            }
+
+            @Override
+            public void visitToManyAttribute(ToManyAttribute attribute) {
+
             }
 
             @Override
