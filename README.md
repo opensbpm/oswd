@@ -10,6 +10,12 @@ OpenSBPM Workflow Definition (OSWD) is a human-readable and intuitive domain-spe
 - **Antlr-based Implementation**
 - **Integration with OpenSBPM**
 
+## Execute
+
+### With Maven
+
+`mvn exec:java -Dexec.args="-input src/test/resources/sample.oswd -output dienstreiseantrag.xml"`
+
 ## WIP
 
 ## Contributing
