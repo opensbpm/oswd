@@ -1,13 +1,25 @@
 package org.opensbpm.oswd;
 
+import org.opensbpm.engine.api.model.definition.ProcessDefinition;
 import org.opensbpm.oswd.Subject.Role;
 import org.opensbpm.oswd.ReceiveTask.Message;
+import org.opensbpm.oswd.convert.ProcessConverter;
 import org.opensbpm.oswd.parser.ProcessParser;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
 public class Oswd {
+
+    public static ProcessDefinition parseOswd(File file) throws IOException {
+        Process process;
+        try (FileReader reader = new FileReader(file)) {
+            process = Oswd.parseOswd(reader);
+        }
+        return new ProcessConverter().convert(process);
+    }
 
     public static Process parseOswd(Reader reader) throws IOException {
         return ProcessParser.parseOswd(reader);

@@ -11,12 +11,12 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 public class Main {
-    private static Option INPUT_OPTION = Option.builder("input")
+    private static final Option INPUT_OPTION = Option.builder("input")
             .argName("file")
             .hasArg()
             .desc("use given oswd file")
             .build();
-    private static Option OUTPUT_OPTION = Option.builder("output")
+    private static final Option OUTPUT_OPTION = Option.builder("output")
             .argName("file")
             .hasArg()
             .desc("use given output file")
@@ -30,38 +30,18 @@ public class Main {
         options.addOption(OUTPUT_OPTION);
         options.addOption(HELP_OPTION);
 
-        // create the parser
-        CommandLineParser parser = new DefaultParser();
         try {
             // parse the command line arguments
-            CommandLine line = parser.parse(options, args);
-            File inputFile;
-            File outputFile;
-            if (line.hasOption(INPUT_OPTION)) {
-                inputFile = new File(line.getOptionValue(INPUT_OPTION));
-                if (!inputFile.exists()) {
-                    throw new MissingOptionException("Input file does not exist");
-                }
-            }else{
-                throw new MissingOptionException("Input file is missing");
-            }
-            if (line.hasOption(OUTPUT_OPTION)) {
-                outputFile = new File(line.getOptionValue(OUTPUT_OPTION));
-            }else{
-                throw new MissingOptionException("Output file is missing");
-            }
-
-            FileReader reader = new FileReader(inputFile);
-            Process process = Oswd.parseOswd(reader);
-            reader.close();
-
-            ProcessDefinition processDefinition = new ProcessConverter().convert(process);
-            FileWriter writer = new FileWriter(outputFile);
-            new ProcessModel().marshal(processDefinition, writer);
-            writer.close();
-
-            if (line.hasOption(HELP_OPTION)) {
+            CliConfiguration cliConfiguration = new CliConfiguration(new DefaultParser().parse(options, args));
+            if (cliConfiguration.hasHelp()) {
                 printHelp(options);
+            }else {
+                ProcessDefinition processDefinition = Oswd.parseOswd(cliConfiguration.getInputFile());
+
+                try (FileWriter writer = new FileWriter(cliConfiguration.getOutputFile())) {
+                    new ProcessModel().marshal(processDefinition, writer);
+                }
+                System.out.println("Converted " + cliConfiguration.getInputFile() + " to " + cliConfiguration.getOutputFile());
             }
         } catch (ParseException exp) {
             // oops, something went wrong
@@ -75,5 +55,38 @@ public class Main {
                 .setPrintWriter(new PrintWriter(System.err))
                 .get();
         formatter.printHelp("oswd", options);
+    }
+
+    private static class CliConfiguration {
+        private final CommandLine line;
+
+        public CliConfiguration(CommandLine line) {
+            this.line = line;
+        }
+
+        public boolean hasHelp() {
+            return line.hasOption(HELP_OPTION);
+        }
+
+        public File getInputFile() throws ParseException {
+            if (line.hasOption(INPUT_OPTION)) {
+                File inputFile = new File(line.getOptionValue(INPUT_OPTION));
+                if (!inputFile.exists()) {
+                    throw new MissingOptionException("Input file does not exist");
+                }
+                return inputFile;
+            } else {
+                throw new MissingOptionException("Input file is missing");
+            }
+        }
+
+        public File getOutputFile() throws ParseException {
+            if (line.hasOption(OUTPUT_OPTION)) {
+                return new File(line.getOptionValue(OUTPUT_OPTION));
+            } else {
+                throw new MissingOptionException("Output file is missing");
+            }
+        }
+
     }
 }
