@@ -34,7 +34,7 @@ public class Oswd {
                 sb.append(String.format("" +
                                 "process %s\n" +
                                 " version %s\n" +
-                                " description %s\n",
+                                " description \"%s\"\n",
                         process.getName(),
                         process.getVersion(),
                         process.getDescription()
@@ -43,14 +43,14 @@ public class Oswd {
 
             @Override
             public void visitSubject(Subject subject) {
-                sb.append(String.format(" %s ",
+                sb.append(String.format(" \"%s\" ",
                         subject.getName()
                 ));
             }
 
             @Override
             public void visitRole(Role role) {
-                sb.append(String.format("with role %s\n",
+                sb.append(String.format("with role \"%s\"\n",
                         role.getName()
                 ));
 
@@ -58,21 +58,21 @@ public class Oswd {
 
             @Override
             public void visitShowTask(ShowTask showTask) {
-                sb.append(String.format("  %s ",
+                sb.append(String.format("  \"%s\" ",
                         showTask.getName()
                 ));
             }
 
             @Override
             public void visitBusinessObject(BusinessObject businessObject) {
-                sb.append(String.format("show %s\n",
+                sb.append(String.format("show \"%s\"\n",
                         businessObject.getName())
                 );
             }
 
             @Override
             public void visitScalarAttribute(ScalarAttribute attribute) {
-                sb.append(String.format("   with %s as %s%s%s\n",
+                sb.append(String.format("   with \"%s\" as %s%s%s\n",
                         attribute.getName(),
                         attribute.getAttributeType().getToken(),
                         attribute.isRequired() ? " required" : "",
@@ -92,14 +92,14 @@ public class Oswd {
 
             @Override
             public void visitProceedTo(String proceedTo) {
-                sb.append(String.format("   proceed to %s\n",
+                sb.append(String.format("   proceed to \"%s\"\n",
                         proceedTo)
                 );
             }
 
             @Override
             public void visitSendTask(SendTask sendTask) {
-                sb.append(String.format("  %s send %s to %s\n",
+                sb.append(String.format("  \"%s\" send \"%s\" to \"%s\"\n",
                         sendTask.getName(),
                         sendTask.getObjectNameReference(),
                         sendTask.getReceiverSubjectName()
@@ -108,7 +108,7 @@ public class Oswd {
 
             @Override
             public void visitReceiveTask(ReceiveTask receiveTask) {
-                sb.append(String.format("  %s receive",
+                sb.append(String.format("  \"%s\" receive",
                         receiveTask.getName()
                 ));
 
@@ -116,7 +116,7 @@ public class Oswd {
 
             @Override
             public void visitMessage(Message message) {
-                sb.append(String.format(" %s proceed to %s\n",
+                sb.append(String.format(" \"%s\" proceed to \"%s\"\n",
                         message.getObjectNameReference(),
                         message.getTaskNameReference()
                 ));

@@ -19,16 +19,16 @@ public class OswdTest {
         String content = "" +
                 "process AProcess\n" +
                 " version 11\n" +
-                " description ADescription\n" +
-                " ASubject with role ARole\n" +
-                "  ATask show AObject\n" +
-                "   with AField as text required readonly\n" +
-                "   with BField as number\n" +
-                "   proceed to BTask\n" +
-                "  BTask send AObject to ASubject\n" +
-                "   proceed to CTask\n" +
-                "  CTask receive Object1 proceed to ATask\n" +
-                "   Object2 proceed to BTask\n" +
+                " description \"A Description\"\n" +
+                " \"A Subject\" with role \"A Role\"\n" +
+                "  \"A Task\" show \"A Object\"\n" +
+                "   with \"A Field\" as text required readonly\n" +
+                "   with \"B Field\" as number\n" +
+                "   proceed to \"B Task\"\n" +
+                "  \"B Task\" send \"A Object\" to \"A Subject\"\n" +
+                "   proceed to \"C Task\"\n" +
+                "  \"C Task\" receive \"Object 1\" proceed to \"A Task\"\n" +
+                "   \"Object 2\" proceed to \"B Task\"\n" +
                 "";
         System.out.println(content);
 
@@ -41,24 +41,24 @@ public class OswdTest {
         assertThat(process.getName(), is("AProcess"));
         assertThat(process.getVersion(), is(11));
         assertThat(process.getSubjects(), contains(
-                isSubjectName("ASubject")
+                isSubjectName("A Subject")
         ));
 
         Subject aSubject = process.getSubjects().stream()
-                .filter(s -> "ASubject".equals(s.getName()))
+                .filter(s -> "A Subject".equals(s.getName()))
                 .findFirst().orElseThrow();
 
         assertThat(aSubject, allOf(
-                isSubjectName("ASubject"),
-                isRoleName("ARole"),
+                isSubjectName("A Subject"),
+                isRoleName("A Role"),
                 hasTasksSize(3)
         ));
 
-        ShowTask aTask = jxPath.getValue(ShowTask.class, "subjects[name='ASubject']/tasks[name='ATask']");
+        ShowTask aTask = jxPath.getValue(ShowTask.class, "subjects[name='A Subject']/tasks[name='A Task']");
         assertThat(aTask, allOf(
-                isTaskName("ATask"),
-                isObjectName("AObject"),
-                isShowProceedTo("BTask")
+                isTaskName("A Task"),
+                isObjectName("A Object"),
+                isShowProceedTo("B Task")
         ));
 
 //        assertThat(aTask.getBusinessObject().getAttributes(),
@@ -68,20 +68,20 @@ public class OswdTest {
 //                )
 //        );
 
-        SendTask bTask = jxPath.getValue(SendTask.class, "subjects[name='ASubject']/tasks[name='BTask']");
+        SendTask bTask = jxPath.getValue(SendTask.class, "subjects[name='A Subject']/tasks[name='B Task']");
         assertThat(bTask, allOf(
-                isTaskName("BTask"),
-                isObjectNameReference("AObject"),
-                isReceiverSubjectName("ASubject"),
-                isSendProceedTo("CTask")
+                isTaskName("B Task"),
+                isObjectNameReference("A Object"),
+                isReceiverSubjectName("A Subject"),
+                isSendProceedTo("C Task")
         ));
 
-        ReceiveTask cTask = jxPath.getValue(ReceiveTask.class, "subjects[name='ASubject']/tasks[name='CTask']");
+        ReceiveTask cTask = jxPath.getValue(ReceiveTask.class, "subjects[name='A Subject']/tasks[name='C Task']");
         assertThat(cTask, allOf(
-                isTaskName("CTask"),
+                isTaskName("C Task"),
                 containsMessages(
-                        isMessage("Object1", "ATask"),
-                        isMessage("Object2", "BTask")
+                        isMessage("Object 1", "A Task"),
+                        isMessage("Object 2", "B Task")
                 )
         ));
 
@@ -93,16 +93,16 @@ public class OswdTest {
         String content = "" +
                 "process AProcess\n" +
                 " version 11\n" +
-                " description ADescription\n" +
-                " ASubject with role ARole\n" +
-                "  ATask show AObject\n" +
-                "   with AField as text required readonly\n" +
-                "   with BField as number\n" +
-                "   proceed to BTask\n" +
-                "  BTask send AObject to ASubject\n" +
-                "   proceed to CTask\n" +
-                "  CTask receive Object1 proceed to ATask\n" +
-                " Object2 proceed to BTask\n" +
+                " description \"A Description\"\n" +
+                " \"A Subject\" with role \"A Role\"\n" +
+                "  \"A Task\" show \"A Object\"\n" +
+                "   with \"A Field\" as text required readonly\n" +
+                "   with \"B Field\" as number\n" +
+                "   proceed to \"B Task\"\n" +
+                "  \"B Task\" send \"A Object\" to \"A Subject\"\n" +
+                "   proceed to \"C Task\"\n" +
+                "  \"C Task\" receive \"Object 1\" proceed to \"A Task\"\n" +
+                " \"Object 2\" proceed to \"B Task\"\n" +
                 "";
         Process process = Oswd.parseOswd(new StringReader(content));
 
@@ -111,7 +111,5 @@ public class OswdTest {
 
         //assert
         assertThat(oswdContent, is(content));
-
     }
-
 }

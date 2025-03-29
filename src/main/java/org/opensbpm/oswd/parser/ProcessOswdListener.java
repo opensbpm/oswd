@@ -1,5 +1,6 @@
 package org.opensbpm.oswd.parser;
 
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.ScalarAttribute.ScalarAttributeBuilder;
@@ -34,7 +35,7 @@ class ProcessOswdListener extends OswdBaseListener {
     @Override
     public void enterProcessName(ProcessNameContext ctx) {
         contextStack.peek(processItem((ProcessContext) ctx.parent))
-                .withName(ctx.IDENTIFIER().getText());
+                .withName(ctx.NAME().getText());
     }
 
     @Override
@@ -46,7 +47,7 @@ class ProcessOswdListener extends OswdBaseListener {
     @Override
     public void enterDescriptionDef(DescriptionDefContext ctx) {
         contextStack.peek(processItem((ProcessContext) ctx.parent))
-                .withDescription(ctx.description().getText());
+                .withDescription(extractName(ctx.description().name()));
     }
 
     @Override
@@ -65,13 +66,13 @@ class ProcessOswdListener extends OswdBaseListener {
     @Override
     public void enterSubjectName(SubjectNameContext ctx) {
         contextStack.peek(subjectItem((SubjectContext) ctx.parent))
-                .withName(ctx.IDENTIFIER().getText());
+                .withName(extractName(ctx.name()));
     }
 
     @Override
     public void enterRoleName(RoleNameContext ctx) {
         contextStack.peek(subjectItem((SubjectContext) ctx.parent))
-                .withRoleName(ctx.IDENTIFIER().getText());
+                .withRoleName(extractName(ctx.name()));
     }
 
     @Override
@@ -96,7 +97,7 @@ class ProcessOswdListener extends OswdBaseListener {
                 ofNullable(ctx.send())
                         .map(send -> contextStack.pop(sendItem(send)))
         )
-                .withName(ctx.taskName().IDENTIFIER().getText())
+                .withName(extractName(ctx.taskName().name()))
                 .build();
 
         contextStack.peek(subjectItem((SubjectContext) ctx.parent))
@@ -110,7 +111,7 @@ class ProcessOswdListener extends OswdBaseListener {
 
         contextStack.peek(showItem(ctx))
                 .withBusinessObject(businessObject)
-                .withProceedTo(ctx.proceed().taskNameReference().IDENTIFIER().getText());
+                .withProceedTo(extractName(ctx.proceed().taskNameReference().name()));
     }
 
     @Override
@@ -121,13 +122,13 @@ class ProcessOswdListener extends OswdBaseListener {
     @Override
     public void enterObjectName(ObjectNameContext ctx) {
         contextStack.peek(objectItem((ObjectContext) ctx.parent))
-                .withName(ctx.IDENTIFIER().getText());
+                .withName(extractName(ctx.name()));
     }
 
     @Override
     public void enterAttribute(AttributeContext ctx) {
         ScalarAttributeBuilder attributeBuilder = contextStack.push(attributeItem(ctx))
-                .withName(ctx.attributeName().IDENTIFIER().getText());
+                .withName(extractName(ctx.attributeName().name()));
 
         Optional.ofNullable(ctx.required())
                 .ifPresent(atxC -> attributeBuilder.asRequired());
@@ -155,28 +156,35 @@ class ProcessOswdListener extends OswdBaseListener {
     @Override
     public void enterSend(SendContext ctx) {
         contextStack.peek(sendItem(ctx))
-                .withObjectNameReference(ctx.objectNameReference().IDENTIFIER().getText())
-                .withProceedTo(ctx.proceed().taskNameReference().IDENTIFIER().getText())
+                .withObjectNameReference(extractName(ctx.objectNameReference().name()))
+                .withProceedTo(extractName(ctx.proceed().taskNameReference().name()))
         ;
     }
 
     @Override
     public void enterSubjectNameReference(SubjectNameReferenceContext ctx) {
         contextStack.peek(sendItem((SendContext) ctx.parent))
-                .withReceiverSubjectName(ctx.IDENTIFIER().getText());
+                .withReceiverSubjectName(extractName(ctx.name()));
     }
 
     @Override
     public void enterMessage(MessageContext ctx) {
         contextStack.peek(receiveItem((ReceiveContext) ctx.parent))
                 .addMessage(
-                        ctx.objectNameReference().IDENTIFIER().getText(),
-                        ctx.proceed().taskNameReference().IDENTIFIER().getText()
+                        extractName(ctx.objectNameReference().name()),
+                        extractName(ctx.proceed().taskNameReference().name())
                 );
     }
 
+
     public Process getProcess() {
         return process;
+    }
+
+    private static String extractName(NameContext nameContext) {
+        return Optional.ofNullable(nameContext.NAME())
+                .map(ParseTree::getText)
+                .orElseGet(() -> nameContext.text().getText());
     }
 
     @SafeVarargs
