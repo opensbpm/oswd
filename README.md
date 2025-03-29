@@ -1,33 +1,32 @@
-# OpenSBPM Workflow Definition
+# OSWD Converter
 
 ## Overview
-OpenSBPM Workflow Definition (OSWD) is a human-readable and intuitive domain-specific language to build workflow definitions for OpenSBPM. OSWD tries to follow native spoken languages.  This repository contains the implementation of a domain-specific language (DSL) for defining subject-oriented business processes in OpenSBPM. The DSL is written java using Antlr and allows intuitive process modeling using a subject-verb structure.
+The OSWD Converter is a Java-based application that uses ANTLR to convert OSWD files into the OpenSBPM-XML format, 
+which can be executed in the OpenSBPM engine. It leverages Apache Commons CLI for command-line argument parsing.
 
-## Features
-- **Subjekt-Verb Syntax** for defining processes
-- **Form-based Task Definitions** with field properties
-- **Decision-making and Workflow Control** (`send`, `receives`, `creates`)
-- **Antlr-based Implementation**
-- **Integration with OpenSBPM**
+## Requirements
+- Java 11 or higher
+- Maven 3.6.0 or higher
 
-## Execute
+## Installation
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/yourusername/oswd-converter.git
+    cd oswd-converter
+    ```
 
-### With Maven
+2. Build the project using Maven:
+    ```sh
+    mvn clean install
+    ```
 
-`mvn exec:java -Dexec.args="-input src/test/resources/sample.oswd -output dienstreiseantrag.xml"`
+## Usage
+To run the application, use the following command:
+```sh
+java -jar target/oswd-converter-1.0.0.jar -input <input-file> -output <output-file>
+```
 
-## WIP
-
-## Contributing
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature-xyz`)
-3. Commit your changes (`git commit -m "Add feature XYZ"`)
-4. Push to the branch (`git push origin feature-xyz`)
-5. Create a Pull Request
-
-## License
-This project is licensed under **GPLv3**.
-
-## Contact     
-For questions, open an issue or reach out via GitHub!
-
+or with maven
+```sh
+mvn exec:java -Dexec.mainClass="org.opensbpm.converter.Converter" -Dexec.args="-input <input-file> -output <output-file>"
+```
