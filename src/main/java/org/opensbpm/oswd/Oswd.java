@@ -10,12 +10,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 public class Oswd {
 
     public static ProcessDefinition parseOswd(File file) throws IOException {
         Process process;
-        try (FileReader reader = new FileReader(file)) {
+        try (FileReader reader = new FileReader(file, StandardCharsets.UTF_8)) {
             process = Oswd.parseOswd(reader);
         }
         return new ProcessConverter().convert(process);
