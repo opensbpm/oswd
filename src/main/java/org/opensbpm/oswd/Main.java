@@ -36,12 +36,29 @@ public class Main {
             if (cliConfiguration.hasHelp()) {
                 printHelp(options);
             }else {
-                ProcessDefinition processDefinition = Oswd.parseOswd(cliConfiguration.getInputFile());
+                ProcessDefinition processDefinition;
+                File inputFile = cliConfiguration.getInputFile();
 
-                try (FileWriter writer = new FileWriter(cliConfiguration.getOutputFile())) {
-                    new ProcessModel().marshal(processDefinition, writer);
+                if(inputFile.getName().endsWith(".oswd")) {
+                    processDefinition = Oswd.parseOswd(inputFile);
+                } else if (inputFile.getName().endsWith(".xml")) {
+                    processDefinition = new ProcessModel().unmarshal(new FileReader(inputFile));
+                }else {
+                    throw new IllegalArgumentException("Unrecognized file type");
                 }
-                System.out.println("Converted " + cliConfiguration.getInputFile() + " to " + cliConfiguration.getOutputFile());
+
+                File outputFile = cliConfiguration.getOutputFile();
+                if(outputFile.getName().endsWith(".oswd")) {
+                    Oswd.writeOswd(processDefinition, outputFile);
+                } else if (outputFile.getName().endsWith(".xml")) {
+                    try (FileWriter writer = new FileWriter(outputFile)) {
+                        new ProcessModel().marshal(processDefinition, writer);
+                    }
+                }else {
+                    throw new IllegalArgumentException("Unrecognized file type");
+                }
+
+                System.out.println("Converted " + inputFile + " to " + outputFile);
             }
         } catch (ParseException exp) {
             // oops, something went wrong

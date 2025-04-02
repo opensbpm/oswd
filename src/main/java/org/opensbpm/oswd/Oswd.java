@@ -4,19 +4,17 @@ import org.opensbpm.engine.api.model.definition.ProcessDefinition;
 import org.opensbpm.oswd.Subject.Role;
 import org.opensbpm.oswd.ReceiveTask.Message;
 import org.opensbpm.oswd.convert.ProcessConverter;
+import org.opensbpm.oswd.convert.ProcessDefinitionConverter;
 import org.opensbpm.oswd.parser.ProcessParser;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class Oswd {
 
-    public static ProcessDefinition parseOswd(File file) throws IOException {
+    public static ProcessDefinition parseOswd(File inputFile) throws IOException {
         Process process;
-        try (FileReader reader = new FileReader(file, StandardCharsets.UTF_8)) {
+        try (FileReader reader = new FileReader(inputFile, StandardCharsets.UTF_8)) {
             process = Oswd.parseOswd(reader);
         }
         return new ProcessConverter().convert(process);
@@ -24,6 +22,13 @@ public class Oswd {
 
     public static Process parseOswd(Reader reader) throws IOException {
         return ProcessParser.parseOswd(reader);
+    }
+
+    public static void writeOswd(ProcessDefinition processDefinition, File outputFile) throws IOException {
+        Process process = new ProcessDefinitionConverter().convert(processDefinition);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(outputFile, StandardCharsets.UTF_8))) {
+            writer.println(toOswd(process));
+        }
     }
 
     public static String toOswd(Process process) throws IOException {
