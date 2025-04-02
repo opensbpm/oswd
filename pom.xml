@@ -72,6 +72,19 @@
         </dependency>
 
         <!--
+        ======================
+         Runtime Dependencies
+        ======================
+        -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <!--
         ====================
           Test Dependencies
         ====================
@@ -110,12 +123,7 @@
          Test Runtime Dependencies
         ============================
         -->
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>4.0.5</version>
-            <scope>test</scope>
-        </dependency>
+
 
     </dependencies>
 
@@ -202,6 +210,21 @@
                         <argument>-help</argument>
                     </arguments>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <finalName>oswd-converter</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
