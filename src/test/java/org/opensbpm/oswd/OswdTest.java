@@ -3,6 +3,8 @@ package org.opensbpm.oswd;
 import org.junit.jupiter.api.Test;
 import org.opensbpm.oswd.jxpath.JXPath;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,24 +18,10 @@ public class OswdTest {
     @Test
     public void testParse() throws Exception {
         //arrange
-        String content = "" +
-                "process AProcess\n" +
-                " version 11\n" +
-                " description \"A Description\"\n" +
-                " \"A Subject\" with role \"A Role\"\n" +
-                "  \"A Task\" show \"A Object\"\n" +
-                "   with \"A Field\" as text required readonly\n" +
-                "   with \"B Field\" as number\n" +
-                "   proceed to \"B Task\"\n" +
-                "  \"B Task\" send \"A Object\" to \"A Subject\"\n" +
-                "   proceed to \"C Task\"\n" +
-                "  \"C Task\" receive \"Object 1\" proceed to \"A Task\"\n" +
-                "   \"Object 2\" proceed to \"B Task\"\n" +
-                "";
-        System.out.println(content);
+        InputStream is = getClass().getResourceAsStream("/sample.oswd");
 
         //act
-        Process process = Oswd.parseOswd(new StringReader(content));
+        Process process = Oswd.parseOswd(new InputStreamReader(is));
 
         //assert
         JXPath<Process> jxPath = new JXPath<>(process);
