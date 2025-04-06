@@ -9,4 +9,4 @@ process AProcess
   "B Task" send "A Object" to "A Subject"
    proceed to "C Task"
   "C Task" receive "Object 1" proceed to "A Task"
-   "Object 2" proceed to "B Task"
+ "Object 2" proceed to "B Task"

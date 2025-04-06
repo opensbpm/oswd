@@ -129,7 +129,7 @@ public class Oswd {
 
             }
         });
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     private Oswd() {
