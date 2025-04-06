@@ -1,5 +1,8 @@
 package org.opensbpm.oswd;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import static java.util.Objects.requireNonNull;
 
 public final class ScalarAttribute extends AbstractAttribute {
@@ -28,6 +31,17 @@ public final class ScalarAttribute extends AbstractAttribute {
 
     private ScalarAttribute copy() {
         return new ScalarAttribute(getName(), attributeType, isRequired(), isReadonly());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", getName())
+                .append("type", attributeType)
+                .append("required", isRequired())
+                .append("readonly", isReadonly())
+                .toString();
+
     }
 
     public static class ScalarAttributeBuilder extends AbstractAttributeBuilder<ScalarAttribute, ScalarAttributeBuilder> {

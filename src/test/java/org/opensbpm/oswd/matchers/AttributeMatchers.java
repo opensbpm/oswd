@@ -1,18 +1,31 @@
 package org.opensbpm.oswd.matchers;
 
 import org.hamcrest.CustomTypeSafeMatcher;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.opensbpm.oswd.Attribute;
 import org.opensbpm.oswd.ScalarAttribute;
 import org.opensbpm.oswd.AttributeType;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.*;
 
 public class AttributeMatchers {
 
+    public static Matcher<Iterable<? extends Attribute>> containsAttributes(Matcher<? super Attribute> matcher, Matcher<? super Attribute>... additionalMatchers) {
+        List<Matcher<? super Attribute>> matchers = new ArrayList<>();
+        matchers.add(matcher);
+        if(additionalMatchers != null) {
+            matchers.addAll(asList(additionalMatchers));
+        }
+        return contains(matchers);
+    }
 
-    public static Matcher<ScalarAttribute> isAttribute(String AField, AttributeType text, boolean required, boolean readonly) {
+    public static Matcher<? extends Attribute> isScalarAttribute(String AField, AttributeType text, boolean required, boolean readonly) {
         return allOf(
                 isAttributeName(AField),
                 isAttributeType(text),
@@ -22,7 +35,7 @@ public class AttributeMatchers {
     }
 
 
-    private static CustomTypeSafeMatcher<ScalarAttribute> isAttributeName(String name) {
+    private static Matcher<ScalarAttribute> isAttributeName(String name) {
         return new CustomTypeSafeMatcher<>("Attribute with name " + name) {
             @Override
             protected boolean matchesSafely(ScalarAttribute attribute) {

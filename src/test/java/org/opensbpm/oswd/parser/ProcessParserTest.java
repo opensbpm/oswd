@@ -1,19 +1,23 @@
 package org.opensbpm.oswd.parser;
 
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.opensbpm.oswd.*;
 import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.jxpath.JXPath;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.opensbpm.oswd.matchers.AttributeMatchers.containsAttributes;
+import static org.opensbpm.oswd.matchers.AttributeMatchers.isScalarAttribute;
 import static org.opensbpm.oswd.matchers.OswdMatchers.*;
-
+import static java.util.Arrays.asList;
 
 public class ProcessParserTest {
 
@@ -24,10 +28,10 @@ public class ProcessParserTest {
         InputStreamReader reader = new InputStreamReader(is);
 
         //act
-        org.opensbpm.oswd.Process process = ProcessParser.parseOswd(reader);
+        Process process = ProcessParser.parseOswd(reader);
 
         //assert
-        JXPath<org.opensbpm.oswd.Process> jxPath = new JXPath<>(process);
+        JXPath<Process> jxPath = new JXPath<>(process);
 
         assertThat(process.getName(), is("AProcess"));
         assertThat(process.getVersion(), is(11));
@@ -52,12 +56,12 @@ public class ProcessParserTest {
                 isShowProceedTo("B Task")
         ));
 
-//        assertThat(aTask.getBusinessObject().getAttributes(),
-//                contains(
-//                        isAttribute("AField", AttributeType.TEXT, true, true),
-//                        isAttribute("BField", AttributeType.NUMBER, false, false)
-//                )
-//        );
+
+        assertThat(aTask.getBusinessObject().getAttributes(), containsAttributes(
+                        (Matcher<? super Attribute>) isScalarAttribute("A Field", AttributeType.TEXT, true, true),
+                        (Matcher<? super Attribute>) isScalarAttribute("B Field", AttributeType.NUMBER, false, false)
+                )
+        );
 
         SendTask bTask = jxPath.getValue(SendTask.class, "subjects[name='A Subject']/tasks[name='B Task']");
         assertThat(bTask, allOf(
