@@ -15,13 +15,9 @@ public class Oswd {
     public static ProcessDefinition parseOswd(File inputFile) throws IOException {
         Process process;
         try (FileReader reader = new FileReader(inputFile, StandardCharsets.UTF_8)) {
-            process = Oswd.parseOswd(reader);
+            process = ProcessParser.parseOswd(reader);
         }
         return new ProcessConverter().convert(process);
-    }
-
-    public static Process parseOswd(Reader reader) throws IOException {
-        return ProcessParser.parseOswd(reader);
     }
 
     public static void writeOswd(ProcessDefinition processDefinition, File outputFile) throws IOException {

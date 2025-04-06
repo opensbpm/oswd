@@ -30,3 +30,8 @@ or with maven
 ```sh
 mvn exec:java -Dexec.mainClass="org.opensbpm.converter.Converter" -Dexec.args="-input <input-file> -output <output-file>"
 ```
+
+### Example
+```sh
+mvn exec:java -Dexec.mainClass="org.opensbpm.converter.Converter" -Dexec.args="-input src/test/resources/sample.oswd -output travelrequest.xml"
+```
