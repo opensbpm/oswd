@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 import org.opensbpm.engine.api.model.definition.ProcessDefinition;
 import org.opensbpm.engine.xmlmodel.ProcessModel;
 import org.opensbpm.oswd.convert.ProcessConverter;
+import org.opensbpm.oswd.model.Process;
 
 import java.io.File;
 import java.io.FileReader;
