@@ -13,9 +13,12 @@ import org.opensbpm.oswd.ReceiveTask;
 import org.opensbpm.oswd.ReceiveTask.Message;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.List.of;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.opensbpm.engine.utils.StreamUtils.oneOrMoreAsList;
@@ -28,7 +31,7 @@ public class OswdMatchers {
                 isProcessName(name),
                 isVersion(version)
         ));
-        if(additional != null) {
+        if (additional != null) {
             matchers.addAll(asList(additional));
         }
         return allOf(matchers);
@@ -81,13 +84,17 @@ public class OswdMatchers {
         };
     }
 
+    public static Matcher<Subject> isSubject(String name, String role) {
+        return isSubject(name, role, null);
+    }
+
     public static Matcher<Subject> isSubject(String name, String role, Matcher<? super Subject>... additionals) {
         ArrayList<Matcher<? super Subject>> matchers = new ArrayList<>(List.of(
                 instanceOf(Subject.class),
                 isSubjectName(name),
                 isRoleName(role)
-                ));
-        if(additionals != null) {
+        ));
+        if (additionals != null) {
             matchers.addAll(asList(additionals));
         }
         return allOf(matchers);
@@ -120,22 +127,8 @@ public class OswdMatchers {
         };
     }
 
-    public static CustomTypeSafeMatcher<Subject> containsTasks(Matcher<? super Task> matcher, Matcher<? super Task>... additionals) {
-        ArrayList<Matcher<? super Task>> matchers = new ArrayList<>(List.of(matcher));
-        matchers.addAll(asList(additionals));
-
-        StringDescription description = new StringDescription();
-        allOf(matchers).describeTo(description);
-        return new CustomTypeSafeMatcher<>("tasks " + description) {
-            @Override
-            protected boolean matchesSafely(Subject subject) {
-                return contains(matchers).matches(subject.getTasks());
-            }
-        };
-    }
-
     public static CustomTypeSafeMatcher<Task> isTask(Matcher<? super Task> matcher, Matcher<? super Task>... additionals) {
-        ArrayList<Matcher<? super Task>> matchers = new ArrayList<>(List.of(matcher));
+        ArrayList<Matcher<? super Task>> matchers = new ArrayList<>(of(matcher));
         matchers.addAll(asList(additionals));
 
         StringDescription description = new StringDescription();
@@ -157,6 +150,14 @@ public class OswdMatchers {
         };
     }
 
+    public static Matcher<ShowTask> isShowTask(String name) {
+        return allOf(
+                instanceOf(ShowTask.class),
+                isTaskName(name),
+                isShowProceedTo(nullValue(String.class))
+        );
+    }
+
     public static Matcher<ShowTask> isShowTask(String name, String proceedTo) {
         return allOf(
                 instanceOf(ShowTask.class),
@@ -175,10 +176,14 @@ public class OswdMatchers {
     }
 
     public static CustomTypeSafeMatcher<ShowTask> isShowProceedTo(String name) {
-        return new CustomTypeSafeMatcher<>("ShowTask with name " + name) {
+        return isShowProceedTo(is(name));
+    }
+
+    public static CustomTypeSafeMatcher<ShowTask> isShowProceedTo(Matcher<String> matcher) {
+        return new CustomTypeSafeMatcher<>("proceedTo " + matcher) {
             @Override
             protected boolean matchesSafely(ShowTask task) {
-                return is(name).matches(task.getProceedTo());
+                return matcher.matches(task.getProceedTo());
             }
         };
     }

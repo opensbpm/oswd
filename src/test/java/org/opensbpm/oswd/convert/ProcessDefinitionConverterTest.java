@@ -9,10 +9,12 @@ import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.jxpath.JXPath;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
+import static org.opensbpm.engine.utils.StreamUtils.filterToOne;
 import static org.opensbpm.oswd.matchers.OswdMatchers.*;
 
 public class ProcessDefinitionConverterTest {
@@ -39,25 +41,30 @@ public class ProcessDefinitionConverterTest {
                 )
         ));
 
-        JXPath<Process> jxPath = JXPath.of(process);
-        Subject mitarbeiterSubject = jxPath.getValue(Subject.class, "subjects[name='Mitarbeiter']");
-        assertThat(mitarbeiterSubject.getName(), is("Mitarbeiter"));
-        assertThat(mitarbeiterSubject.getRole().getName(), is("Angestellte"));
+        Subject mitarbeiterSubject = filterToOne(process.getSubjects(), subject -> "Mitarbeiter".equals(subject.getName()))
+                .orElseThrow();
+        assertThat(mitarbeiterSubject, isSubject("Mitarbeiter", "Angestellte", hasTasksSize(6)));
 
-        ShowTask showTask = jxPath.getValue(ShowTask.class, "subjects[name='Mitarbeiter']/tasks[name='DR-Antrag ausfüllen']");
+        ShowTask showTask = filterToOne(mitarbeiterSubject.getTasks(), task -> "DR-Antrag ausfüllen".equals(task.getName()))
+                .map(ShowTask.class::cast)
+                .orElseThrow();
         assertThat(showTask, isShowTask(
                 "DR-Antrag ausfüllen",
                 "DR-Antrag an Vorgesetzer senden"
         ));
 
-        ReceiveTask receiveTask = jxPath.getValue(ReceiveTask.class, "subjects[name='Mitarbeiter']/tasks[name='Antwort von Vorgesetzter empfangen']");
+        ReceiveTask receiveTask = filterToOne(mitarbeiterSubject.getTasks(), task -> "Antwort von Vorgesetzter empfangen".equals(task.getName()))
+                .map(ReceiveTask.class::cast)
+                .orElseThrow();
         assertThat(receiveTask, isReceiveTask(
                 "Antwort von Vorgesetzter empfangen",
                 isMessage("Genehmigung", "DR antreten"),
                 isMessage("Ablehnung", "Abgelehnt")
         ));
 
-        SendTask sendTask = jxPath.getValue(SendTask.class, "subjects[name='Mitarbeiter']/tasks[name='DR-Antrag an Vorgesetzer senden']");
+        SendTask sendTask = filterToOne(mitarbeiterSubject.getTasks(), task -> "DR-Antrag an Vorgesetzer senden".equals(task.getName()))
+                .map(SendTask.class::cast)
+                .orElseThrow();
         assertThat(sendTask, isSendTask(
                 "DR-Antrag an Vorgesetzer senden",
                 "DR-Antrag",
