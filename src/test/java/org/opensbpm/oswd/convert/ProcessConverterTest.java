@@ -46,11 +46,46 @@ public class ProcessConverterTest {
         ProcessDefinition processDefinition = new ProcessConverter().convert(process);
 
         //assert
-        StringWriter stringWriter = new StringWriter();
-        new ProcessModel().marshal(processDefinition, stringWriter);
-        String xml = stringWriter.toString();
-        System.out.println(xml);
 
+        assertThat(processDefinition, isProcessName("AProcess"));
+        assertThat(processDefinition, isProcessVersion(11));
+        assertThat(processDefinition.getSubjects(), hasSize(1));
 
+        SubjectDefinition subjectDefinition = processDefinition.getSubjects().get(0);
+        assertThat(subjectDefinition, isSubjectName("ASubject"));
+        assertThat(subjectDefinition.getStates(), containsInAnyOrder(
+                isFunctionState("ATask"),
+                isSendState("BTask"),
+                isReceiveState("CTask")
+        ));
+
+        StateDefinition aTaskDefinition = findTaskByName(subjectDefinition, "ATask");
+        assertThat(aTaskDefinition, isFunctionState(
+                "ATask",
+                containsHeads(isSendState("BTask"))
+        ));
+
+        StateDefinition bTaskDefinition = findTaskByName(subjectDefinition, "BTask");
+        assertThat(bTaskDefinition, isSendState(
+                        "BTask",
+                        "ASubject",
+                        "AObject",
+                        isReceiveState("CTask")
+                )
+        );
+
+        StateDefinition cTaskDefinition = findTaskByName(subjectDefinition, "CTask");
+        assertThat(cTaskDefinition, isReceiveState(
+                "CTask",
+                isMessage("AObject", "ATask"),
+                isMessage("AObject", "BTask")
+                )
+        );
+    }
+
+    private static StateDefinition findTaskByName(SubjectDefinition subjectDefinition, String taskName) {
+        return subjectDefinition.getStates().stream()
+                .filter(state -> taskName.equals(state.getName()))
+                .findFirst().orElseThrow();
     }
 }
