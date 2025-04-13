@@ -1,12 +1,92 @@
-process AProcess
- version 11
- description "A Description"
- "A Subject" with role "A Role"
-  "A Task" show "A Object"
-   with "A Field" as text required readonly
-   with "B Field" as number
-   proceed to "B Task"
-  "B Task" send "A Object" to "A Subject"
-   proceed to "C Task"
-  "C Task" receive "Object 1" proceed to "A Task"
- "Object 2" proceed to "B Task"
+#!groovy
+import org.opensbpm.oswd.ProcessBuilder
+
+import static org.opensbpm.oswd.model.AttributeType.DATE
+import static org.opensbpm.oswd.model.AttributeType.TEXT
+
+new ProcessBuilder().process(name: 'Dienstreiseantrag', version: 1) {
+    subject(name: 'Mitarbeiter', role: 'Angestellter') {
+        task(name: 'DR-Antrag ausfüllen') {
+            object(name: 'DR-Antrag') {
+                attribute(name: 'Name', type: TEXT, required: true)
+                attribute(name: 'Reisebeginn', type: DATE, required: true)
+                attribute(name: 'Reiseende', type: DATE, required: true)
+                attribute(name: 'Reiseziel', type: TEXT, required: true)
+            }
+            proceedTo('DR-Antrag an Vorgesetzter senden')
+        }
+        send(name: 'DR-Antrag an Vorgesetzter senden',
+                message: 'DR-Antrag',
+                receiver: 'Vorgesetzter',
+                proceedTo: 'Antwort von Vorgesetzter empfangen')
+        receive(name: 'Antwort von Vorgesetzter empfangen') {
+            message(object: 'Genehmigung', proceedTo: 'DR antreten')
+            message(object: 'Ablehnung', proceedTo: 'Abgelehnt')
+        }
+        task(name: 'DR antreten') {
+            object(name: 'DR-Antrag') {
+                attribute(name: 'Name', type: TEXT, readonly: true)
+                attribute(name: 'Reisebeginn', type: DATE, readonly: true)
+            }
+            proceedTo('DR beendet')
+        }
+        task(name: 'Abgelehnt') {
+            object(name: 'Ablehnung') {
+                attribute(name: 'Begründung', type: TEXT, readonly: true)
+            }
+            proceedTo('DR beendet')
+        }
+        task(name: 'DR beendet')
+    }
+    subject(name: 'Vorgesetzter', role: 'Abteilungsleiter') {
+        receive(name: 'DR-Antrag empfangen') {
+            message(object: 'DR-Antrag', proceedTo: 'DR-Antrag prüfen')
+        }
+        task(name: 'DR-Antrag prüfen') {
+            object(name: 'DR-Antrag') {
+                attribute(name: 'Name', type: TEXT, readonly: true)
+                attribute(name: 'Reisebeginn', type: DATE, readonly: true)
+                attribute(name: 'Reiseende', type: DATE, readonly: true)
+                attribute(name: 'Reiseziel', type: TEXT, readonly: true)
+            }
+            proceedTo('Genehmigen') {
+                object(name: 'Genehmigung') {
+                    attribute(name: 'Bemerkung', type: TEXT)
+                }
+            }
+            proceedTo('Ablehnen') {
+                object(name: 'Ablehnung') {
+                    attribute(name: 'Begründung', type: TEXT, required: true)
+                }
+            }
+        }
+        send(name: 'Genehmigen',
+                message: 'Genehmigung',
+                receiver: 'Mitarbeiter',
+                proceedTo: 'Buchung veranlassen')
+        send(name: 'Buchung veranlassen',
+                message: 'DR-Antrag',
+                receiver: 'Reisestelle',
+                proceedTo: 'Ende')
+        send(name: 'Ablehnen',
+                message: 'Ablehnung',
+                receiver: 'Mitarbeiter',
+                proceedTo: 'Ende')
+        task(name: 'Ende')
+    }
+    subject(name: 'Reisestelle', role: 'Reisestelle') {
+        receive(name: 'DR-Antrag empfangen') {
+            message(object: 'DR-Antrag', proceedTo: 'Buchen')
+        }
+        task(name: 'Buchen') {
+            object(name: 'DR-Antrag') {
+                attribute(name: 'Name', type: TEXT, readonly: true)
+                attribute(name: 'Reisebeginn', type: DATE, readonly: true)
+                attribute(name: 'Reiseende', type: DATE, readonly: true)
+                attribute(name: 'Reiseziel', type: TEXT, readonly: true)
+            }
+            proceedTo('Reise gebucht')
+        }
+        task(name: 'Reise gebucht')
+    }
+}

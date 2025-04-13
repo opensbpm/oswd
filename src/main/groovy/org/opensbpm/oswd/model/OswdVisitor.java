@@ -1,7 +1,5 @@
 package org.opensbpm.oswd.model;
 
-import org.opensbpm.oswd.ShowTask;
-
 public interface OswdVisitor {
     void visitProcess(Process process);
 

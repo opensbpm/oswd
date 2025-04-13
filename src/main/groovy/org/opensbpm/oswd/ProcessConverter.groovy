@@ -12,6 +12,7 @@ import org.opensbpm.engine.api.model.definition.PermissionDefinition.Permission
 import org.opensbpm.engine.api.model.definition.ProcessDefinition
 import org.opensbpm.engine.api.model.definition.SubjectDefinition
 import org.opensbpm.oswd.model.Attribute
+import org.opensbpm.oswd.model.AttributeType
 import org.opensbpm.oswd.model.Message
 import org.opensbpm.oswd.model.Object
 import org.opensbpm.oswd.model.OswdVisitor
@@ -23,7 +24,7 @@ import org.opensbpm.oswd.model.Subject
 import org.opensbpm.oswd.model.Task
 import org.opensbpm.oswd.model.Taskable
 
-import static org.opensbpm.oswd.AttributeType.*
+import static org.opensbpm.oswd.model.AttributeType.*
 
 
 import static java.util.Collections.emptyList

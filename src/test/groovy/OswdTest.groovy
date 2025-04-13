@@ -20,7 +20,7 @@ class OswdTest {
     @Test
     public void testParseOswd() throws Exception {
         //arrange
-        InputStream inputStream = getClass().getResourceAsStream("/sample.groovy.oswd");
+        InputStream inputStream = getClass().getResourceAsStream("/sample.oswd");
         InputStreamReader reader = new InputStreamReader(inputStream);
 
         //act

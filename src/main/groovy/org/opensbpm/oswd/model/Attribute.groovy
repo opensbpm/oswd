@@ -1,7 +1,5 @@
 package org.opensbpm.oswd.model
 
-import org.opensbpm.oswd.AttributeType
-
 class Attribute implements HasName{
     String name
     AttributeType type
