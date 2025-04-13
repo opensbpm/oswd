@@ -2,12 +2,24 @@ package org.opensbpm.oswd.convert;
 
 import org.junit.jupiter.api.Test;
 import org.opensbpm.engine.api.model.definition.ProcessDefinition;
+import org.opensbpm.engine.api.model.definition.StateDefinition;
+import org.opensbpm.engine.api.model.definition.SubjectDefinition;
 import org.opensbpm.engine.xmlmodel.ProcessModel;
 import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.parser.ProcessParser;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.opensbpm.engine.api.junit.FunctionStateDefinitionMatchers.containsHeads;
+import static org.opensbpm.engine.api.junit.ProcessDefinitionMatchers.*;
+import static org.opensbpm.engine.api.junit.ReceiveStateDefinitionMatchers.*;
+import static org.opensbpm.engine.api.junit.StateDefinitionMatchers.isState;
+import static org.opensbpm.engine.api.junit.FunctionStateDefinitionMatchers.isFunctionState;
+import static org.opensbpm.engine.api.junit.SendStateDefinitionMatchers.isSendState;
 
 public class ProcessConverterTest {
 
