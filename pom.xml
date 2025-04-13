@@ -27,13 +27,6 @@
             <name>OpenSBPM Releases</name>
             <url>https://maven.pkg.github.com/opensbpm/engine</url>
         </repository>
-        <repository>
-            <id>opensbpm-snapshots</id>
-            <url>https://team.sedelmaier.at/archiva/repository/opensbpm-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
     </repositories>
 
     <dependencyManagement>
