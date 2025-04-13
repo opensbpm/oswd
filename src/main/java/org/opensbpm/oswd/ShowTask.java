@@ -1,5 +1,7 @@
 package org.opensbpm.oswd;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
@@ -44,6 +46,15 @@ public final class ShowTask extends AbstractNamed implements Task {
 
     private ShowTask copy() {
         return new ShowTask(getName(), businessObject, proceedTo);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", getName())
+                .append("businessObject", getBusinessObject()==null?"<null>":getBusinessObject().getName())
+                .append("proceedTo", proceedTo)
+                .toString();
     }
 
     public static class ShowTaskBuilder extends TaskBuilder<ShowTask, ShowTaskBuilder> {

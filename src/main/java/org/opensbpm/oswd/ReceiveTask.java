@@ -42,6 +42,14 @@ public final class ReceiveTask extends AbstractNamed implements Task {
         return new ReceiveTask(getName(), messages);
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", getName())
+                .toString();
+    }
+
+
     public interface Message {
 
         String getObjectNameReference();
