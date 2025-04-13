@@ -1,3 +1,4 @@
+#!groovy
 import org.opensbpm.oswd.ProcessBuilder
 
 import static org.opensbpm.oswd.AttributeType.DATE
@@ -5,14 +6,16 @@ import static org.opensbpm.oswd.AttributeType.TEXT
 
 new ProcessBuilder().process(name: 'Dienstreiseantrag', version: 1) {
     subject(name: 'Mitarbeiter', role: 'Angestellter') {
-        task(name: 'Antrag ausfüllen') {
+        task(name: 'DR-Antrag ausfüllen') {
             object(name: 'DR-Antrag') {
                 attribute(name: 'Name', type: TEXT, required: true)
                 attribute(name: 'Reisebeginn', type: DATE, required: true)
+                attribute(name: 'Reiseende', type: DATE, required: true)
+                attribute(name: 'Reiseziel', type: TEXT, required: true)
             }
-            proceedTo('Antrag an Vorgesetzter senden')
+            proceedTo('DR-Antrag an Vorgesetzter senden')
         }
-        send(name: 'Antrag an Vorgesetzter senden',
+        send(name: 'DR-Antrag an Vorgesetzter senden',
                 message: 'DR-Antrag',
                 receiver: 'Vorgesetzter',
                 proceedTo: 'Antwort von Vorgesetzter empfangen')
@@ -25,15 +28,15 @@ new ProcessBuilder().process(name: 'Dienstreiseantrag', version: 1) {
                 attribute(name: 'Name', type: TEXT, readonly: true)
                 attribute(name: 'Reisebeginn', type: DATE, readonly: true)
             }
-            proceedTo('Ende')
+            proceedTo('DR beendet')
         }
         task(name: 'Abgelehnt') {
             object(name: 'Ablehnung') {
                 attribute(name: 'Begründung', type: TEXT, readonly: true)
             }
-            proceedTo('Ende')
+            proceedTo('DR beendet')
         }
-        task(name: 'Ende')
+        task(name: 'DR beendet')
     }
     subject(name: 'Vorgesetzter', role: 'Abteilungsleiter') {
         receive(name: 'DR-Antrag empfangen') {
