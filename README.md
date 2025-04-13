@@ -10,28 +10,24 @@ which can be executed in the OpenSBPM engine. It leverages Apache Commons CLI fo
 
 ## Installation
 1. Clone the repository:
-    ```sh
-    git clone https://github.com/yourusername/oswd-converter.git
-    cd oswd-converter
-    ```
+   ```sh
+   git clone https://github.com/opensbpm/oswd.git
+   cd oswd
+   ```
 
 2. Build the project using Maven:
-    ```sh
-    mvn clean install
-    ```
+   ```sh
+   mvn clean install
+   ```
 
 ## Usage
 To run the application, use the following command:
-```sh
-java -jar target/oswd-converter-1.0.0.jar -input <input-file> -output <output-file>
-```
+   ```sh
+  java -jar target/oswd-converter.jar -input <input-file> -output <output-file>
+   ```
 
-or with maven
-```sh
-mvn exec:java -Dexec.mainClass="org.opensbpm.converter.Converter" -Dexec.args="-input <input-file> -output <output-file>"
-```
 
 ### Example
-```sh
-mvn exec:java -Dexec.mainClass="org.opensbpm.converter.Converter" -Dexec.args="-input src/test/resources/sample.oswd -output travelrequest.xml"
-```
+   ```sh
+  java -jar target/oswd-converter.jar -input src/test/resources/sample.oswd -output sample.xml
+   ```
