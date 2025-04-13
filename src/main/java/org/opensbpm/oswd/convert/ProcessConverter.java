@@ -30,7 +30,7 @@ public class ProcessConverter {
 
     public ProcessDefinition convert(Process processType) {
         ProcessBuilder processBuilder = process(processType.getName())
-//                .description(processType.getDescription())
+                .description(processType.getDescription())
                 .version(processType.getVersion());
 //        if (ProcessModelState.INACTIVE == processType.getState()) {
 //            processBuilder.asIncative();
@@ -74,7 +74,8 @@ public class ProcessConverter {
 
             @Override
             public void visitShowTask(ShowTask showTask) {
-                functionState = functionState(showTask.getName());
+                functionState = functionState(showTask.getName())
+                        .withDisplayName(showTask.getName());
 
 //            Optional.ofNullable(showTask.getProvider())
 //                    .ifPresent(provider -> functionState.withProvider(provider));
