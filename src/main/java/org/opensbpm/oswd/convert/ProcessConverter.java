@@ -32,25 +32,6 @@ public class ProcessConverter {
         ProcessBuilder processBuilder = process(processType.getName())
                 .description(processType.getDescription())
                 .version(processType.getVersion());
-//        if (ProcessModelState.INACTIVE == processType.getState()) {
-//            processBuilder.asIncative();
-//        }
-
-//        Map<ObjectBuilder, ObjectType> objectsCache = processType.getObject().stream()
-//                .map(objectType -> {
-//                    ObjectBuilder objectBuilder = object(objectType.getName());
-//                    objectBuilder.withDisplayName(objectType.getDisplayName());
-//                    processBuilder.addObject(objectBuilder);
-//
-//                    return Pair.of(objectBuilder, objectType);
-//                })
-//                .collect(PairUtils.toMap());
-//
-//        for (Map.Entry<ObjectBuilder, ObjectType> entry : objectsCache.entrySet()) {
-//            for (ObjectBuilder.AttributeBuilder<?, ?> attributeBuilder : createAttributes(processBuilder, entry.getValue().getFieldOrToOneOrToMany())) {
-//                entry.getKey().addAttribute(attributeBuilder);
-//            }
-//        }
 
         processType.accept(new OswdVisitor() {
             private UserSubjectBuilder subjectBuilder;
@@ -77,36 +58,22 @@ public class ProcessConverter {
                 functionState = functionState(showTask.getName())
                         .withDisplayName(showTask.getName());
 
-//            Optional.ofNullable(showTask.getProvider())
-//                    .ifPresent(provider -> functionState.withProvider(provider));
-//            if (showTask.getParameters() != null) {
-//                for (Element element : showTask.getParameters().getAny()) {
-//                    functionState.addParameter(element.getLocalName(), element.getFirstChild().getNodeValue());
-//                }
-//            }
-
                 subjectBuilder.addState(functionState);
             }
 
             @Override
             public void visitBusinessObject(BusinessObject businessObject) {
                 ObjectBuilder objectBuilder = objectCache.computeIfAbsent(businessObject.getName(), s -> {
-                    ObjectBuilder builder = object(businessObject.getName());
-                    //objectBuilder.withDisplayName(businessObject.getDisplayName());
+                    ObjectBuilder builder = object(businessObject.getName())
+                            .withDisplayName(businessObject.getName());
                     processBuilder.addObject(builder);
                     return builder;
                 });
 
                 for (Attribute attribute : businessObject.getAttributes()) {
-                    FieldBuilder fieldBuilder = field(attribute.getName(), asFieldType(((ScalarAttribute)attribute).getAttributeType()));
-//                Optional.ofNullable(field.isIndexed())
-//                        .ifPresent(indexed -> fieldBuilder.withIndexed(indexed));
-//                Optional.ofNullable(field.getAutocomplete())
-//                        .ifPresent(autocomplete
-//                                -> fieldBuilder.withAutocompleteObject(processBuilder.getObject(autocomplete)));
+                    FieldBuilder fieldBuilder = field(attribute.getName(), asFieldType(((ScalarAttribute) attribute).getAttributeType()));
                     objectBuilder.addAttribute(fieldBuilder);
                 }
-
 
                 PermissionBuilder permissionBuilder = permission(objectBuilder)
                         .addPermissions(createAttribute(objectBuilder, businessObject.getAttributes()));
@@ -134,9 +101,6 @@ public class ProcessConverter {
                         processBuilder.getSubject(sendTask.getReceiverSubjectName()),
                         processBuilder.getObject(sendTask.getObjectNameReference())
                 );
-//            if (((SendTask) stateType).isAsync() != null && ((SendTask) stateType).isAsync()) {
-//                sendState.asAsync();
-//            }
                 subjectBuilder.addState(sendState);
             }
 
@@ -170,41 +134,6 @@ public class ProcessConverter {
 
         updateHeads(subject, subjectBuilder, processBuilder);
     }
-
-//    private List<AttributeBuilder<?, ?>> createAttributes(ProcessBuilder processBuilder, List<Object> attributeTypes) {
-//        List<AttributeBuilder<?, ?>> attributeBuilders = new ArrayList<>();
-//        for (Object attributeType : attributeTypes) {
-//            AttributeBuilder<?, ?> attributeBuilder;
-//            if (attributeType instanceof Field) {
-//                Field field = (Field) attributeType;
-//                FieldBuilder fieldBuilder = field(field.getValue(), FieldType.valueOf(field.getType().value()));
-//                Optional.ofNullable(field.isIndexed())
-//                        .ifPresent(indexed -> fieldBuilder.withIndexed(indexed));
-//                Optional.ofNullable(field.getAutocomplete())
-//                        .ifPresent(autocomplete
-//                                -> fieldBuilder.withAutocompleteObject(processBuilder.getObject(autocomplete)));
-//                attributeBuilder = fieldBuilder;
-//            } else if (attributeType instanceof ToOneType) {
-//                ToOneType toOneType = (ToOneType) attributeType;
-//                ToOneBuilder toOneBuilder = toOne(toOneType.getName());
-//                for (AttributeBuilder<?, ?> childBuilder : createAttributes(processBuilder, toOneType.getFieldOrToOneOrToMany())) {
-//                    toOneBuilder.addAttribute(childBuilder);
-//                }
-//                attributeBuilder = toOneBuilder;
-//            } else if (attributeType instanceof ToManyType) {
-//                ToManyType toManyType = (ToManyType) attributeType;
-//                ToManyBuilder toManyBuilder = toMany(toManyType.getName());
-//                for (AttributeBuilder<?, ?> childBuilder : createAttributes(processBuilder, toManyType.getFieldOrToOneOrToMany())) {
-//                    toManyBuilder.addAttribute(childBuilder);
-//                }
-//                attributeBuilder = toManyBuilder;
-//            } else {
-//                throw new UnsupportedOperationException("AttributeType " + attributeType + " not supported yet");
-//            }
-//            attributeBuilders.add(attributeBuilder);
-//        }
-//        return attributeBuilders;
-//    }
 
     private static FieldType asFieldType(AttributeType attributeType) {
         switch (attributeType) {
@@ -257,12 +186,6 @@ public class ProcessConverter {
             AbstractAttributePermissionBuilder<?, ?> permissionBuilder = simplePermission(attributeBuilder,
                     attribute.isReadonly() ? Permission.READ : Permission.WRITE,
                     attribute.isRequired());
-
-//                Optional.ofNullable(attributeType.getDefaultValue())
-//                        .ifPresent(permissionBuilder::addDefaultValue);
-
-
-            //attributeType.
             permissions.add(permissionBuilder);
         }
         return permissions;
