@@ -1,5 +1,7 @@
 package org.opensbpm.oswd;
 
+import groovy.lang.GroovyShell;
+import groovy.util.GroovyScriptEngine;
 import org.opensbpm.engine.api.model.definition.ProcessDefinition;
 import org.opensbpm.oswd.Subject.Role;
 import org.opensbpm.oswd.ReceiveTask.Message;
@@ -13,11 +15,13 @@ import java.nio.charset.StandardCharsets;
 public class Oswd {
 
     public static ProcessDefinition parseOswd(File inputFile) throws IOException {
-        Process process;
+        //Process process;
         try (FileReader reader = new FileReader(inputFile, StandardCharsets.UTF_8)) {
-            process = ProcessParser.parseOswd(reader);
+            GroovyShell shell = new GroovyShell();
+            org.opensbpm.oswd.model.Process process = (org.opensbpm.oswd.model.Process) shell.parse(reader).run();
+            System.out.println(process);
         }
-        return new ProcessConverter().convert(process);
+        return new ProcessConverter().convert(null);
     }
 
     public static void writeOswd(ProcessDefinition processDefinition, File outputFile) throws IOException {

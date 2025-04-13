@@ -6,6 +6,10 @@ class Send implements Taskable{
     String receiver
     String proceedTo
 
+    @Override
+    void accept(OswdVisitor visitor) {
+        visitor.visitSend(this);
+    }
 
     @Override
     public String toString() {

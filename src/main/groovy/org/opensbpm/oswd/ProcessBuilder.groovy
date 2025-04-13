@@ -2,6 +2,7 @@ package org.opensbpm.oswd
 
 import org.opensbpm.oswd.model.Message
 import org.opensbpm.oswd.model.Object
+import org.opensbpm.oswd.model.ProceedTo
 import org.opensbpm.oswd.model.Process
 import org.opensbpm.oswd.model.Receive
 import org.opensbpm.oswd.model.Subject
@@ -29,21 +30,27 @@ class ProcessBuilder extends FactoryBuilderSupport {
 
         def newInstance(FactoryBuilderSupport fbs, name, value, Map attrs) {
             def clazz = loader.loadClass('org.opensbpm.oswd.model.' + capitalize(name))
-            value ? clazz.newInstance(name: value) : clazz.newInstance()
+            value ? clazz.newInstance(value) : clazz.newInstance()
         }
 
         @Override
         void setChild(FactoryBuilderSupport builder, java.lang.Object parent, java.lang.Object child) {
             if (parent instanceof Process) {
-                ((Process) parent).subjects << (Subject)child
+                ((Process) parent).subjects << (Subject) child
             } else if (parent instanceof Subject) {
                 ((Subject) parent).tasks << (Taskable) child
             } else if (parent instanceof Task) {
-                ((Task) parent).object = (Object) child
+                if (child instanceof Object) {
+                    ((Task) parent).object = (Object) child
+                } else if (child instanceof ProceedTo) {
+                    ((Task) parent).proceedTos << (ProceedTo) child
+                }
+            } else if (parent instanceof ProceedTo) {
+                ((ProceedTo) parent).object = (Object) child
             } else if (parent instanceof Object) {
-                ((Object) parent).attributes <<  (Attribute) child
+                ((Object) parent).attributes << (Attribute) child
             } else if (parent instanceof Receive) {
-                ((Receive) parent).messages <<  (Message) child
+                ((Receive) parent).messages << (Message) child
             }
         }
     }

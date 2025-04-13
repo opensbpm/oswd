@@ -18,7 +18,7 @@
         <groovy.version>4.0.24</groovy.version>
 
         <antlr4.version>4.13.2</antlr4.version>
-        <opensbpm-engine.version>0.1-SNAPSHOT</opensbpm-engine.version>
+        <opensbpm-engine.version>0.1.1-SNAPSHOT</opensbpm-engine.version>
     </properties>
 
     <repositories>

@@ -50,7 +50,7 @@ public class ProcessDefinitionConverterTest {
                 .orElseThrow();
         assertThat(showTask, isShowTask(
                 "DR-Antrag ausfüllen",
-                "DR-Antrag an Vorgesetzer senden"
+                "DR-Antrag an Vorgesetzter senden"
         ));
 
         ReceiveTask receiveTask = filterToOne(mitarbeiterSubject.getTasks(), task -> "Antwort von Vorgesetzter empfangen".equals(task.getName()))
@@ -62,11 +62,11 @@ public class ProcessDefinitionConverterTest {
                 isMessage("Ablehnung", "Abgelehnt")
         ));
 
-        SendTask sendTask = filterToOne(mitarbeiterSubject.getTasks(), task -> "DR-Antrag an Vorgesetzer senden".equals(task.getName()))
+        SendTask sendTask = filterToOne(mitarbeiterSubject.getTasks(), task -> "DR-Antrag an Vorgesetzter senden".equals(task.getName()))
                 .map(SendTask.class::cast)
                 .orElseThrow();
         assertThat(sendTask, isSendTask(
-                "DR-Antrag an Vorgesetzer senden",
+                "DR-Antrag an Vorgesetzter senden",
                 "DR-Antrag",
                 "Vorgesetzter",
                 "Antwort von Vorgesetzter empfangen"

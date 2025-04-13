@@ -1,9 +1,18 @@
 package org.opensbpm.oswd.model
 
-class Task implements Taskable{
+class Task implements HasName, Taskable {
     String name
-    String proceedTo
     Object object
+    List<ProceedTo> proceedTos = []
+
+    @Override
+    void accept(OswdVisitor visitor) {
+        visitor.visitTask(this);
+        if (object != null) {
+            visitor.visitObject(object)
+        }
+        proceedTos.forEach(proceedTo -> proceedTo.accept(visitor))
+    }
 
     @Override
     String toString() {
