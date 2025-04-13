@@ -16,7 +16,7 @@
         <maven.compiler.target>11</maven.compiler.target>
 
         <antlr4.version>4.13.2</antlr4.version>
-        <opensbpm-engine.version>0.1-SNAPSHOT</opensbpm-engine.version>
+        <opensbpm-engine.version>0.1.1-SNAPSHOT</opensbpm-engine.version>
     </properties>
 
     <repositories>
@@ -103,6 +103,13 @@
             <version>3.0</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.opensbpm.engine</groupId>
+            <artifactId>opensbpm-engine-api-junit</artifactId>
+            <version>${opensbpm-engine.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>commons-jxpath</groupId>
