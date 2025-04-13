@@ -1,8 +1,10 @@
 package org.opensbpm.oswd.matchers;
 
 import org.hamcrest.CustomTypeSafeMatcher;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+import org.opensbpm.oswd.Process;
 import org.opensbpm.oswd.ShowTask;
 import org.opensbpm.oswd.SendTask;
 import org.opensbpm.oswd.Subject;
@@ -16,21 +18,79 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.opensbpm.engine.utils.StreamUtils.oneOrMoreAsList;
 
 public class OswdMatchers {
 
-    private static CustomTypeSafeMatcher<Subject> isSubject(Matcher<? super Subject> matcher, Matcher<? super Subject>... additionals) {
-        ArrayList<Matcher<? super Subject>> matchers = new ArrayList<>(List.of(matcher));
-        matchers.addAll(asList(additionals));
+    public static Matcher<Process> isProcess(String name, int version, Matcher<Process>... additional) {
+        ArrayList<Matcher<? super Process>> matchers = new ArrayList<>(List.of(
+                instanceOf(Process.class),
+                isProcessName(name),
+                isVersion(version)
+        ));
+        if(additional != null) {
+            matchers.addAll(asList(additional));
+        }
+        return allOf(matchers);
+    }
 
-        StringDescription description = new StringDescription();
-        allOf(matchers).describeTo(description);
-        return new CustomTypeSafeMatcher<>("subjects " + description) {
+    public static CustomTypeSafeMatcher<Process> isProcessName(String name) {
+        return new CustomTypeSafeMatcher<>("name") {
             @Override
-            protected boolean matchesSafely(Subject subject) {
-                return allOf(matchers).matches(subject);
+            protected boolean matchesSafely(Process process) {
+                return is(name).matches(process.getName());
             }
         };
+    }
+
+    public static CustomTypeSafeMatcher<Process> isVersion(int version) {
+        return new CustomTypeSafeMatcher<>("version") {
+            @Override
+            protected boolean matchesSafely(Process process) {
+                return is(version).matches(process.getVersion());
+            }
+        };
+    }
+
+    public static Matcher<Process> isDescription(String description) {
+        return isDescription(is(description));
+    }
+
+    public static Matcher<Process> isDescription(Matcher<String> descriptionMatcher) {
+        return new CustomTypeSafeMatcher<>("description") {
+            @Override
+            protected boolean matchesSafely(Process process) {
+                return descriptionMatcher.matches(process.getDescription());
+            }
+        };
+    }
+
+    public static Matcher<Process> containsSubjects(Matcher<Subject> matcher, Matcher<Subject>... additionals) {
+        List<Matcher<? super Subject>> matchers = oneOrMoreAsList(matcher, additionals);
+        return new CustomTypeSafeMatcher<>("subjects") {
+            @Override
+            protected boolean matchesSafely(Process process) {
+                return containsInAnyOrder(matchers).matches(process.getSubjects());
+            }
+
+            @Override
+            protected void describeMismatchSafely(Process item, Description mismatchDescription) {
+                mismatchDescription.appendText("was ");
+                mismatchDescription.appendValueList("", ", ", "", item.getSubjects());
+            }
+        };
+    }
+
+    public static Matcher<Subject> isSubject(String name, String role, Matcher<? super Subject>... additionals) {
+        ArrayList<Matcher<? super Subject>> matchers = new ArrayList<>(List.of(
+                instanceOf(Subject.class),
+                isSubjectName(name),
+                isRoleName(role)
+                ));
+        if(additionals != null) {
+            matchers.addAll(asList(additionals));
+        }
+        return allOf(matchers);
     }
 
     public static CustomTypeSafeMatcher<Subject> isSubjectName(String name) {
@@ -97,6 +157,14 @@ public class OswdMatchers {
         };
     }
 
+    public static Matcher<ShowTask> isShowTask(String name, String proceedTo) {
+        return allOf(
+                instanceOf(ShowTask.class),
+                isTaskName(name),
+                isShowProceedTo(proceedTo)
+        );
+    }
+
     public static CustomTypeSafeMatcher<? super ShowTask> isObjectName(String name) {
         return new CustomTypeSafeMatcher<>("ShowTask with name " + name) {
             @Override
@@ -113,6 +181,16 @@ public class OswdMatchers {
                 return is(name).matches(task.getProceedTo());
             }
         };
+    }
+
+    public static Matcher<SendTask> isSendTask(String name, String object, String receiver, String proceedTo) {
+        return allOf(
+                instanceOf(SendTask.class),
+                isTaskName(name),
+                isObjectNameReference(object),
+                isReceiverSubjectName(receiver),
+                isSendProceedTo(proceedTo)
+        );
     }
 
     public static CustomTypeSafeMatcher<? super SendTask> isObjectNameReference(String name) {
@@ -142,9 +220,16 @@ public class OswdMatchers {
         };
     }
 
+    public static Matcher<ReceiveTask> isReceiveTask(String name, Matcher<? super Message> matcher, Matcher<? super Message>... additionals) {
+        return allOf(
+                instanceOf(ReceiveTask.class),
+                isTaskName(name),
+                containsMessages(matcher, additionals)
+        );
+    }
+
     public static CustomTypeSafeMatcher<ReceiveTask> containsMessages(Matcher<? super Message> matcher, Matcher<? super Message>... additionals) {
-        ArrayList<Matcher<? super Message>> matchers = new ArrayList<>(List.of(matcher));
-        matchers.addAll(asList(additionals));
+        List<Matcher<? super Message>> matchers = oneOrMoreAsList(matcher, additionals);
 
         StringDescription description = new StringDescription();
         allOf(matchers).describeTo(description);
@@ -180,8 +265,6 @@ public class OswdMatchers {
             }
         };
     }
-
-
 
 
     public OswdMatchers() {

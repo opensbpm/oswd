@@ -3,9 +3,13 @@ package org.opensbpm.oswd.jxpath;
 import org.apache.commons.jxpath.JXPathContext;
 
 public class JXPath<T> {
+    public static <T> JXPath<T> of(T contextBean) {
+        return new JXPath<>(contextBean);
+    }
+
     private final JXPathContext jxPathContext;
 
-    public JXPath(T contextBean) {
+    private JXPath(T contextBean) {
         this.jxPathContext = JXPathContext.newContext(contextBean);
     }
 

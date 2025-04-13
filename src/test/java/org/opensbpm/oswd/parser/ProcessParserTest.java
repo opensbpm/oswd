@@ -31,7 +31,7 @@ public class ProcessParserTest {
         Process process = ProcessParser.parseOswd(reader);
 
         //assert
-        JXPath<Process> jxPath = new JXPath<>(process);
+        JXPath<Process> jxPath = JXPath.of(process);
 
         assertThat(process.getName(), is("AProcess"));
         assertThat(process.getVersion(), is(11));

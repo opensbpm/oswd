@@ -1,7 +1,11 @@
 package org.opensbpm.oswd;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
@@ -21,7 +25,7 @@ public final class Subject extends AbstractNamed {
 
     private Subject(String name, Role role, Collection<Task> tasks) {
         super(name);
-        this.role = role;
+        this.role = Objects.requireNonNull(role, "Role must not be null");
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -41,6 +45,14 @@ public final class Subject extends AbstractNamed {
 
     private Subject copy() {
         return new Subject(getName(), role, tasks);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", getName())
+                .append("role", getRole().getName())
+                .toString();
     }
 
     public interface Role extends HasName {
