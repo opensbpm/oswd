@@ -6,6 +6,7 @@ class Process implements HasName{
     String description
     List<Subject> subjects = []
 
+
     void accept(OswdVisitor visitor) {
         visitor.visitProcess(this);
         subjects.forEach(subject -> subject.accept(visitor));

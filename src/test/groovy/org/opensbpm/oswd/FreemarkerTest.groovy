@@ -1,8 +1,11 @@
+package org.opensbpm.oswd
+
+import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.Test
 import org.opensbpm.engine.api.model.ProcessModelState
 import org.opensbpm.engine.api.model.definition.PermissionDefinition.Permission
 import org.opensbpm.engine.api.model.definition.ProcessDefinition
-import org.opensbpm.oswd.ProcessConverter
+import org.opensbpm.oswd.model.Process
 
 import static org.hamcrest.CoreMatchers.not
 import static org.hamcrest.MatcherAssert.assertThat
@@ -15,23 +18,25 @@ import static org.opensbpm.engine.api.junit.ReceiveStateDefinitionMatchers.isMes
 import static org.opensbpm.engine.api.junit.ReceiveStateDefinitionMatchers.isReceiveState
 import static org.opensbpm.engine.api.junit.SendStateDefinitionMatchers.isSendState
 
-class OswdTest {
+class FreemarkerTest {
 
     @Test
     public void testParseOswd() throws Exception {
         //arrange
         InputStream inputStream = getClass().getResourceAsStream("/sample.oswd");
         InputStreamReader reader = new InputStreamReader(inputStream);
+        Process process = Oswd.readProcess(reader)
 
         //act
-        GroovyShell shell = new GroovyShell();
-        org.opensbpm.oswd.model.Process process = (org.opensbpm.oswd.model.Process) shell.parse(reader).run();
-        new NodePrinter().print(process)
-        System.out.println(process);
-        ProcessDefinition result = new ProcessConverter().convert(process);
+        Writer writer = new StringWriter()
+        Freemarker.write(process, writer);
+        writer.close()
+        //printf "%s", writer.toString()
+        ProcessDefinition result = Oswd.readOswd(new StringReader(writer.toString()))
+
 
         //assert
-        assertThat(result.getName(), is("Dienstreiseantrag"));
+        MatcherAssert.assertThat(result.getName(), is("Dienstreiseantrag"));
         assertThat(result.getVersion(), is(1));
         assertThat(result.getState(), is(ProcessModelState.ACTIVE));
         assertThat(result.getDescription(), not(emptyString()));
@@ -90,5 +95,6 @@ class OswdTest {
                 ));
 
     }
+
 
 }
