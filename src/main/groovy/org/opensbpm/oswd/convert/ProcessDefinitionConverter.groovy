@@ -4,20 +4,22 @@ import org.opensbpm.engine.api.model.definition.*;
 import org.opensbpm.engine.api.model.definition.PermissionDefinition.AttributePermissionDefinition;
 import org.opensbpm.engine.api.model.definition.StateDefinition.FunctionStateDefinition;
 import org.opensbpm.engine.api.model.definition.StateDefinition.ReceiveStateDefinition;
-import org.opensbpm.engine.api.model.definition.StateDefinition.SendStateDefinition;
-import org.opensbpm.engine.api.model.definition.StateDefinition.ReceiveStateDefinition.ReceiveTransitionDefinition;
+import org.opensbpm.engine.api.model.definition.StateDefinition.SendStateDefinition
 import org.opensbpm.engine.api.model.definition.SubjectDefinition.UserSubjectDefinition;
 import org.opensbpm.engine.api.model.definition.ObjectDefinition.AttributeDefinition;
 import org.opensbpm.engine.api.model.definition.ObjectDefinition.AttributeDefinitionVisitor;
 import org.opensbpm.engine.api.model.definition.ObjectDefinition.FieldDefinition;
 import org.opensbpm.engine.api.model.definition.ObjectDefinition.ToOneDefinition;
-import org.opensbpm.engine.api.model.definition.ObjectDefinition.ToManyDefinition;
+import org.opensbpm.engine.api.model.definition.ObjectDefinition.ToManyDefinition
+
+import java.util.stream.Collectors;
+
 import static org.opensbpm.engine.api.model.FieldType.*;
 import org.opensbpm.oswd.model.*;
 
-public class ProcessDefinitionConverter {
+class ProcessDefinitionConverter {
 
-    public Process convert(ProcessDefinition processType) {
+    Process convert(ProcessDefinition processType) {
         Process process = new Process()
         process.with {
             name = processType.getName()
@@ -44,7 +46,7 @@ public class ProcessDefinitionConverter {
             Taskable task = stateDefinition.accept(new StateDefinitionVisitor<Taskable>() {
 
                 @Override
-                public Taskable visitFunctionState(FunctionStateDefinition functionStateDefinition) {
+                Taskable visitFunctionState(FunctionStateDefinition functionStateDefinition) {
                     Task task = new Task();
                     task.with {
                         name =  functionStateDefinition.getName()
@@ -61,19 +63,28 @@ public class ProcessDefinitionConverter {
                 }
 
                 @Override
-                public Taskable visitReceiveState(ReceiveStateDefinition receiveStateDefinition) {
+                Taskable visitReceiveState(ReceiveStateDefinition receiveStateDefinition) {
                     Receive receive = new Receive()
                     receive.with {
                         name = receiveStateDefinition.getName()
-                        receive.messages = receiveStateDefinition.transitions.stream()
-                                .map(transition -> new Message(transition.getObjectDefinition().getName(), transition.getHead().getName()))
+                        messages = receiveStateDefinition.transitions.stream()
+                                .map(transition -> convertMessage(transition))
                                 .collect(Collectors.toList());
                     }
                     return receive
                 }
 
+                private Message convertMessage(transition) {
+                    def message = new Message()
+                    message.with {
+                        object = transition.getObjectDefinition().getName()
+                        proceedTo = transition.getHead().getName()
+                    }
+                    return message
+                }
+
                 @Override
-                public Taskable visitSendState(SendStateDefinition sendStateDefinition) {
+                Taskable visitSendState(SendStateDefinition sendStateDefinition) {
                     Send send = new Send()
                     send.with {
                         name = sendStateDefinition.getName()
@@ -113,14 +124,17 @@ public class ProcessDefinitionConverter {
     private static Attribute convertAttribute(final AttributeDefinition attributeDefinition) {
         return attributeDefinition.accept(new AttributeDefinitionVisitor<Attribute>() {
             @Override
-            public Attribute visitField(FieldDefinition fieldDefinition) {
+            Attribute visitField(FieldDefinition fieldDefinition) {
                 Attribute attribute = new Attribute()
-                attribute.with {
+                        attribute.with {
                     name = fieldDefinition.getName()
-                    required = attributeDefinition.fieldDefinition.isRequired()
-                    defaultValue = fieldDefinition.getDefaultValue()
+                    type = determineType(fieldDefinition)
+                    //TODO defaultValue = fieldDefinition.getDefaultValue()
                 }
-                        .withName(attributeDefinition.getName());
+                return attribute
+            }
+
+            private AttributeType determineType(FieldDefinition fieldDefinition) {
                 AttributeType type;
                 switch (fieldDefinition.getFieldType()) {
                     case STRING:
@@ -147,17 +161,16 @@ public class ProcessDefinitionConverter {
                     default:
                         throw new UnsupportedOperationException("Unsupported field type: " + fieldDefinition.getFieldType());
                 }
-                attribute.withType(type);
-                return attribute.build();
+                return type
             }
 
             @Override
-            public Attribute visitToOne(ToOneDefinition toOneDefinition) {
+            Attribute visitToOne(ToOneDefinition toOneDefinition) {
                 //return convertNested(ToOneAttribute.builder(), toOneDefinition);
             }
 
             @Override
-            public Attribute visitToMany(ToManyDefinition toManyDefinition) {
+            Attribute visitToMany(ToManyDefinition toManyDefinition) {
                 //return convertNested(ToManyAttribute.builder(), toManyDefinition);
             }
         });

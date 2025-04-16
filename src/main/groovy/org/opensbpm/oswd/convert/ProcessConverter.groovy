@@ -1,11 +1,10 @@
-package org.opensbpm.oswd
+package org.opensbpm.oswd.convert
 
 import org.opensbpm.engine.api.model.FieldType
 import org.opensbpm.engine.api.model.builder.*
 import org.opensbpm.engine.api.model.builder.FunctionStateBuilder.AbstractAttributePermissionBuilder
 import org.opensbpm.engine.api.model.builder.FunctionStateBuilder.PermissionBuilder
 import org.opensbpm.engine.api.model.builder.ObjectBuilder.AttributeBuilder
-import org.opensbpm.engine.api.model.builder.ProcessBuilder
 import org.opensbpm.engine.api.model.builder.ObjectBuilder.FieldBuilder
 import org.opensbpm.engine.api.model.definition.ObjectDefinition.AttributeDefinition
 import org.opensbpm.engine.api.model.definition.PermissionDefinition.Permission
@@ -64,22 +63,26 @@ public class ProcessConverter {
             }
 
             @Override
-            public void visitObject(Object bobject) {
-                ObjectBuilder objectBuilder = objectCache.computeIfAbsent(bobject.getName(), s -> {
-                    ObjectBuilder builder = object(bobject.getName())
-                            .withDisplayName(bobject.getName())
-                    processBuilder.addObject(builder)
-                    return builder
-                })
+            public void visitObject(Object object) {
+                ObjectBuilder objectBuilder = getObject(object.name)
 
-                for (Attribute attribute : bobject.getAttributes()) {
+                for (Attribute attribute : object.getAttributes()) {
                     FieldBuilder fieldBuilder = field(attribute.getName(), asFieldType((attribute.getType())))
                     objectBuilder.addAttribute(fieldBuilder)
                 }
 
                 PermissionBuilder permissionBuilder = permission(objectBuilder)
-                        .addPermissions(createAttribute(objectBuilder, bobject.getAttributes()))
+                        .addPermissions(createAttribute(objectBuilder, object.getAttributes()))
                 functionState.addPermission(permissionBuilder)
+            }
+
+            private ObjectBuilder getObject(String objectName) {
+                 return objectCache.computeIfAbsent(objectName, s -> {
+                    ObjectBuilder builder = object(objectName)
+                            .withDisplayName(objectName)
+                    processBuilder.addObject(builder)
+                    return builder
+                })
             }
 
             @Override
@@ -96,7 +99,7 @@ public class ProcessConverter {
             public void visitSend(Send send) {
                 SendStateBuilder sendState = sendState(send.getName(),
                         getSubject(send.getReceiver()),
-                        processBuilder.getObject(send.getMessage())
+                        getObject(send.getMessage())
                 )
                 subjectBuilder.addState(sendState)
             }

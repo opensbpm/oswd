@@ -1,10 +1,8 @@
 package org.opensbpm.oswd
 
-import groovy.lang.GroovyShell
 import org.apache.commons.cli.*
 import org.opensbpm.engine.api.model.definition.ProcessDefinition
 import org.opensbpm.engine.xmlmodel.ProcessModel
-import org.opensbpm.oswd.model.Process
 import java.nio.charset.StandardCharsets
 
 public class Main {
@@ -35,19 +33,32 @@ public class Main {
             }else {
                 File inputFile = cliConfiguration.getInputFile()
 
-                Process process
-                try (FileReader reader = new FileReader(inputFile, StandardCharsets.UTF_8)) {
-                    GroovyShell shell = new GroovyShell()
-                    process = (Process) shell.parse(reader).run()
+                ProcessDefinition processDefinition
+                if(inputFile.name.endsWith(".oswd")){
+                    try (FileReader reader = new FileReader(inputFile, StandardCharsets.UTF_8)) {
+                        processDefinition = Oswd.readOswd(reader)
+                    }
+                }else if(inputFile.name.endsWith(".xml")) {
+                    try (FileReader reader = new FileReader(inputFile, StandardCharsets.UTF_8)) {
+                        processDefinition = new ProcessModel().unmarshal(reader)
+                    }
+                }else {
+                    throw new IllegalArgumentException("Unsupported file type: " + inputFile.name)
                 }
 
-                ProcessDefinition processDefinition = new ProcessConverter().convert(process)
 
                 File outputFile = cliConfiguration.getOutputFile()
-                try (FileWriter writer = new FileWriter(outputFile)) {
-                    new ProcessModel().marshal(processDefinition, writer)
+                if(outputFile.name.endsWith(".oswd")){
+                    try (FileWriter writer = new FileWriter(outputFile)) {
+                        Oswd.writeProcess(processDefinition, writer)
+                    }
+                }else if(outputFile.name.endsWith(".xml")) {
+                    try (FileWriter writer = new FileWriter(outputFile)) {
+                        new ProcessModel().marshal(processDefinition, writer)
+                    }
+                }else {
+                    throw new IllegalArgumentException("Unsupported file type: " + inputFile.name)
                 }
-
                 System.out.println("Converted " + inputFile + " to " + outputFile)
             }
         } catch (ParseException exp) {
