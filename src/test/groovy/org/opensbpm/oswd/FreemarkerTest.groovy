@@ -7,6 +7,8 @@ import org.opensbpm.engine.api.model.definition.PermissionDefinition.Permission
 import org.opensbpm.engine.api.model.definition.ProcessDefinition
 import org.opensbpm.oswd.model.Process
 
+import java.nio.charset.Charset
+
 import static org.hamcrest.CoreMatchers.not
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
@@ -24,7 +26,7 @@ class FreemarkerTest {
     public void testParseOswd() throws Exception {
         //arrange
         InputStream inputStream = getClass().getResourceAsStream("/sample.oswd");
-        InputStreamReader reader = new InputStreamReader(inputStream);
+        InputStreamReader reader = new InputStreamReader(inputStream, Charset.forName('UTF-8'));
         Process process = Oswd.readProcess(reader)
 
         //act
