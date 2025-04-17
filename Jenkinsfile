@@ -60,13 +60,8 @@ node('jdk17'){
                         openTasksPublisher(highPriorityTaskIdentifiers: 'FIXME', lowPriorityTaskIdentifiers: 'TODO', normalPriorityTaskIdentifiers: 'PENDING', pattern: '**/*.*',excludePattern: '**/target/**')
                     ]
                 ) {
-                    //'JDK 1.8' is need for sonarqube (Hostname not verified (no certificates))
-                    withSonarQubeEnv('Sonarqube') {
-                        sh "mvn -DskipTests \
-                                -Dsonar.projectKey=${model.getGroupId()}:${model.getArtifactId()}:${BRANCH_NAME.replace('/',"-")} \
-                                -Dsonar.projectName=\"${model.getName()} ($BRANCH_NAME)\" \
-                                pmd:cpd pmd:pmd sonar:sonar"
-                    }
+                    sh "mvn -DskipTests \
+                            pmd:cpd pmd:pmd"
                 }
             }finally{
                 recordIssues (enabledForFailure: true, 
@@ -76,16 +71,6 @@ node('jdk17'){
                         cpd(pattern: '**/target/cpd.xml'), 
                         pmdParser(pattern: '**/target/pmd.xml')
                     ])
-                    /*
-                timeout(time: 15, unit: 'MINUTES') {
-                    def qg = waitForQualityGate()
-                    if (qg.status == 'ERROR') {
-                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                    }else if (qg.status == 'WARN') {
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
-                */
             }
         }
         
