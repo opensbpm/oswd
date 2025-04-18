@@ -44,6 +44,9 @@ class MainTest {
     @Test
     void testMainWithCorrectArgs() {
         //arrange
+        def errStream = new ByteArrayOutputStream()
+        System.err = new PrintStream(errStream)
+
         def outputStream = new ByteArrayOutputStream()
         System.out = new PrintStream(outputStream)
 
