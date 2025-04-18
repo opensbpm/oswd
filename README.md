@@ -17,8 +17,15 @@ which can be executed in the OpenSBPM engine. It leverages Apache Commons CLI fo
 
 2. Build the project using Maven:
    ```sh
-   mvn clean install
+   mvn clean install site
    ```
+
+3. (Optional) Display the generated site:
+   ```sh
+   mvn site:run
+   ```
+   Open your browser and navigate to `http://localhost:8080` to view the site.
+   If you want to view the JaCoco report, navigate to `http://localhost:8080/jacoco/index.html`.
 
 ## Usage
 To run the application, use the following command:

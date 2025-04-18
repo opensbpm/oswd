@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opensbpm.oswd</groupId>
@@ -10,6 +9,16 @@
 
     <name>opensbpm-oswd</name>
     <description>Support for oswd-files using antlrv4</description>
+
+    <developers>
+        <developer>
+            <name>Stefan Sedelmaier</name>
+            <email>stefan@sedelmaier.at</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,14 +30,6 @@
         <freemarker.version>2.3.34</freemarker.version>
         <opensbpm-engine.version>0.1.1</opensbpm-engine.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>opensbpm</id>
-            <name>OpenSBPM Releases</name>
-            <url>https://maven.pkg.github.com/opensbpm/engine</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -144,6 +145,14 @@
 
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>opensbpm</id>
+            <name>OpenSBPM Releases</name>
+            <url>https://maven.pkg.github.com/opensbpm/engine</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -245,6 +254,60 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.12.1</version>
+            </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.9.0</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.9.0</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <!--
+                            <report>mailing-lists</report>
+                            <report>ci-management</report>
+                            <report>issue-management</report>
+                            -->
+                            <report>team</report>
+                            <!--report>dependencies</report-->
+                            <report>summary</report>
+                            <report>licenses</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
