@@ -1,11 +1,8 @@
 package org.opensbpm.oswd
 
 import org.apache.commons.cli.*
-import org.opensbpm.engine.api.model.definition.ProcessDefinition
-import org.opensbpm.engine.xmlmodel.ProcessModel
-import java.nio.charset.StandardCharsets
 
-public class Main {
+class Main {
     private static final Option INPUT_OPTION = Option.builder("input")
             .argName("file")
             .hasArg()
@@ -18,7 +15,7 @@ public class Main {
             .build()
     private static final Option HELP_OPTION = new Option("help", "print this message")
 
-    public static void main(String[] args) throws Exception {
+    static void main(String[] args) throws Exception {
         Options options = new Options()
 
         options.addOption(INPUT_OPTION)
@@ -30,35 +27,12 @@ public class Main {
             CliConfiguration cliConfiguration = new CliConfiguration(new DefaultParser().parse(options, args))
             if (cliConfiguration.hasHelp()) {
                 printHelp(options)
-            }else {
-                File inputFile = cliConfiguration.getInputFile()
+            } else {
+                def inputFile = cliConfiguration.getInputFile()
+                def outputFile = cliConfiguration.getOutputFile()
 
-                ProcessDefinition processDefinition
-                if(inputFile.name.endsWith(".oswd")){
-                    try (FileReader reader = new FileReader(inputFile, StandardCharsets.UTF_8)) {
-                        processDefinition = Oswd.readOswd(reader)
-                    }
-                }else if(inputFile.name.endsWith(".xml")) {
-                    try (FileReader reader = new FileReader(inputFile, StandardCharsets.UTF_8)) {
-                        processDefinition = new ProcessModel().unmarshal(reader)
-                    }
-                }else {
-                    throw new IllegalArgumentException("Unsupported file type: " + inputFile.name)
-                }
+                new OswdConverter(inputFile, outputFile).convert()
 
-
-                File outputFile = cliConfiguration.getOutputFile()
-                if(outputFile.name.endsWith(".oswd")){
-                    try (FileWriter writer = new FileWriter(outputFile)) {
-                        Oswd.writeProcess(processDefinition, writer)
-                    }
-                }else if(outputFile.name.endsWith(".xml")) {
-                    try (FileWriter writer = new FileWriter(outputFile)) {
-                        new ProcessModel().marshal(processDefinition, writer)
-                    }
-                }else {
-                    throw new IllegalArgumentException("Unsupported file type: " + inputFile.name)
-                }
                 System.out.println("Converted " + inputFile + " to " + outputFile)
             }
         } catch (ParseException exp) {
@@ -75,18 +49,19 @@ public class Main {
         formatter.printHelp("oswd", options)
     }
 
+
     private static class CliConfiguration {
         private final CommandLine line
 
-        public CliConfiguration(CommandLine line) {
+        CliConfiguration(CommandLine line) {
             this.line = line
         }
 
-        public boolean hasHelp() {
+        boolean hasHelp() {
             return line.hasOption(HELP_OPTION)
         }
 
-        public File getInputFile() throws ParseException {
+        File getInputFile() throws ParseException {
             if (line.hasOption(INPUT_OPTION)) {
                 File inputFile = new File(line.getOptionValue(INPUT_OPTION))
                 if (!inputFile.exists()) {
@@ -98,7 +73,7 @@ public class Main {
             }
         }
 
-        public File getOutputFile() throws ParseException {
+        File getOutputFile() throws ParseException {
             if (line.hasOption(OUTPUT_OPTION)) {
                 return new File(line.getOptionValue(OUTPUT_OPTION))
             } else {
