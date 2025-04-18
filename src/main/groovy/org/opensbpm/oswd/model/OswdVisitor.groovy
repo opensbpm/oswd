@@ -16,4 +16,6 @@ public interface OswdVisitor {
     void visitSend(Send send);
 
     void visitReceive(Receive receive);
+
+    void visitMessage(Message message);
 }

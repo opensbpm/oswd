@@ -7,6 +7,7 @@ class Receive implements Taskable {
     @Override
     void accept(OswdVisitor visitor) {
         visitor.visitReceive(this);
+        messages.forEach(message -> message.accept(visitor));
     }
 
 }

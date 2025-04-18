@@ -11,7 +11,7 @@ public class ProceedTo {
     void accept(OswdVisitor visitor) {
         visitor.visitProceedTo(this)
         if(object != null) {
-            visitor.visitObject(object)
+            object.accept(visitor)
         }
     }
 }

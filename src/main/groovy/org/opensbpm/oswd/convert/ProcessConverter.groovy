@@ -29,11 +29,11 @@ import static org.opensbpm.oswd.model.AttributeType.*
 import static java.util.Collections.emptyList
 import static org.opensbpm.engine.api.model.builder.DefinitionFactory.*
 
-public class ProcessConverter {
+class ProcessConverter {
 
     private final Map<String, ObjectBuilder> objectCache = new HashMap<>()
 
-    public ProcessDefinition convert(Process processType) {
+    ProcessDefinition convert(Process processType) {
         ProcessBuilder processBuilder = process(processType.getName())
                 .description(processType.getDescription())
                 .version(processType.getVersion())
@@ -43,19 +43,19 @@ public class ProcessConverter {
             private FunctionStateBuilder functionState
 
             @Override
-            public void visitProcess(Process process) {
+            void visitProcess(Process process) {
                 //noop
             }
 
             @Override
-            public void visitSubject(Subject subject) {
+            void visitSubject(Subject subject) {
                 subjectBuilder = getSubject(subject.getName())
                 subjectBuilder.addRole(subject.getRole())
                 processBuilder.addSubject(subjectBuilder)
             }
 
             @Override
-            public void visitTask(Task task) {
+            void visitTask(Task task) {
                 functionState = functionState(task.getName())
                         .withDisplayName(task.getName())
 
@@ -63,7 +63,7 @@ public class ProcessConverter {
             }
 
             @Override
-            public void visitObject(Object object) {
+            void visitObject(Object object) {
                 ObjectBuilder objectBuilder = getObject(object.name)
 
                 for (Attribute attribute : object.getAttributes()) {
@@ -86,17 +86,17 @@ public class ProcessConverter {
             }
 
             @Override
-            public void visitAttribute(Attribute attribute) {
+            void visitAttribute(Attribute attribute) {
                 //noop
             }
 
             @Override
-            public void visitProceedTo(ProceedTo proceedTo) {
+            void visitProceedTo(ProceedTo proceedTo) {
 
             }
 
             @Override
-            public void visitSend(Send send) {
+            void visitSend(Send send) {
                 SendStateBuilder sendState = sendState(send.getName(),
                         getSubject(send.getReceiver()),
                         getObject(send.getMessage())
@@ -114,12 +114,16 @@ public class ProcessConverter {
             }
 
             @Override
-            public void visitReceive(Receive receive) {
+            void visitReceive(Receive receive) {
                 ReceiveStateBuilder receiveStateBuilder = receiveState(receive.getName())
 
                 subjectBuilder.addState(receiveStateBuilder)
             }
 
+            @Override
+            void visitMessage(Message message) {
+                //noop
+            }
         })
 
         for (Subject subject : processType.getSubjects()) {

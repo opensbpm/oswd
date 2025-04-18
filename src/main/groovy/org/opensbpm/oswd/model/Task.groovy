@@ -9,13 +9,8 @@ class Task implements HasName, Taskable {
     void accept(OswdVisitor visitor) {
         visitor.visitTask(this);
         if (object != null) {
-            visitor.visitObject(object)
+            object.accept(visitor)
         }
         proceedTos.forEach(proceedTo -> proceedTo.accept(visitor))
-    }
-
-    @Override
-    String toString() {
-        return "Task(name: $name)"
     }
 }

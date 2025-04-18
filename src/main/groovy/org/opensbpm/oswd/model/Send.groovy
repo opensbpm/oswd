@@ -11,13 +11,4 @@ class Send implements Taskable{
         visitor.visitSend(this);
     }
 
-    @Override
-    public String toString() {
-        return "Send{" +
-                "name='" + name + '\'' +
-                ", message='" + message + '\'' +
-                ", receiver='" + receiver + '\'' +
-                ", proceedTo='" + proceedTo + '\'' +
-                '}';
-    }
 }

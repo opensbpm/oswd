@@ -12,9 +12,4 @@ class Process implements HasName{
         subjects.forEach(subject -> subject.accept(visitor));
     }
 
-
-    @Override
-    String toString() {
-        return "Process(name: $name, version: $version, description: $description, subjects: $subjects)"
-    }
 }

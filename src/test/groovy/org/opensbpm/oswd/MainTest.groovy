@@ -27,14 +27,17 @@ class MainTest {
     @Test
     void testMainWithoutArgs() {
         //arrange
+        def errStream = new ByteArrayOutputStream()
+        System.err = new PrintStream(errStream)
+
         def outputStream = new ByteArrayOutputStream()
-        System.err = new PrintStream(outputStream)
+        System.out = new PrintStream(outputStream)
 
         //act
         Main.main()
 
         //assert
-        def result = outputStream.toString()
+        def result = errStream.toString()
         assertThat(result, containsString("usage: oswd"));
     }
 
