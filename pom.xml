@@ -27,7 +27,7 @@
 
         <!-- dependency versions -->
         <spring.boot.version>3.4.1</spring.boot.version>
-        <freemarker.version>2.3.34</freemarker.version>
+        <freemarker.version>2.3.35</freemarker.version>
         <opensbpm-engine.version>0.1.1</opensbpm-engine.version>
     </properties>
 
